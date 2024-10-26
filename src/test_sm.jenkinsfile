@@ -2,25 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    try {
-                        // Вытягиваем проект из репозитория
-                        checkout([
-                            $class: 'GitSCM',
-                            branches: [[name: "*/${BRANCH}"]],
-                            userRemoteConfigs: [[url: "https://github.com/RaptorTM/service-model.git"]]
-                        ])
-                    } catch (Exception e) {
-                        echo "Failed to checkout repository: ${e.getMessage()}"
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
-            }
-        }
-
         stage('Run main.groovy') {
             steps {
                 // Запускаем файл main.groovy
