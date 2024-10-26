@@ -12,12 +12,13 @@ pipeline {
                 script {
 
 //                     def jenkinsRootDir = build.getEnvVars()["JENKINS_HOME"];
-                    def parent = getClass().getClassLoader()
-                    def loader = new GroovyClassLoader(parent)
+//                     def parent = getClass().getClassLoader()
+//                     def loader = new GroovyClassLoader(parent)
 
 //                     def someParameterValue = "abc"
                     println jenkinsRootDir
-                    def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
+//                     def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
+                    def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
 
                     def Services = groovyClass.getConfig()
                     println Services['dockerfile']
