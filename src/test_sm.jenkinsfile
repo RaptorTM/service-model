@@ -1,4 +1,7 @@
 import groovy.io.FileType
+import hudson.model.*
+import java.io.File;
+import jenkins.model.Jenkins;
 
 pipeline {
     agent any
@@ -7,44 +10,30 @@ pipeline {
         stage('Load Classes') {
             steps {
                 script {
-                    def packageName = 'modules.config' // Имя вашего пакета
-                    def classes = []
 
-                    def rootDir = new File('src\\modules\\config')
+                    def jenkinsRootDir = build.getEnvVars()["JENKINS_HOME"];
+                    def parent = getClass().getClassLoader()
+                    def loader = new GroovyClassLoader(parent)
 
-//                     if (!rootDir.exists()) {
-//                         throw new Exception("Directory 'src\\modules\\config' does not exist")
-//                     }
+//                     def someParameterValue = "abc"
 
-                    def processFiles = { dir ->
-                        dir.eachFile { file ->
-                            if (file.isDirectory()) {
-                                processFiles(file)
-                            } else if (file.name.endsWith('.groovy')) {
-                                def relativePath = file.path.substring(rootDir.path.size() + 1).replace(File.separatorChar, '.').substring(0, -7)
-                                if (relativePath.startsWith(packageName)) {
-                                    classes << load("${packageName}.${relativePath}")
-                                }
-                            }
-                        }
-                    }
+                    def groovyClass = loader.parseClass(new File(jenkinsRootDir + "src\\modules\\config\\serviceModel.groovy")).newInstance()
 
-                    classes.each { clazz ->
-                        println "Loaded class: ${clazz.name}"
-                    }
+                    def Services = groovyClass.getConfig()
+                    println Services['dockerfile']
                 }
             }
         }
-        stage('Run main.groovy') {
-            steps {
-                // Запускаем файл main.groovy
-                script {
-                    def groovyScript = load 'src\\Main.groovy'
-                    groovyScript.run_test_script()
-
-                }
-            }
-        }
+//         stage('Run main.groovy') {
+//             steps {
+//                 // Запускаем файл main.groovy
+//                 script {
+//                     def groovyScript = load 'src\\Main.groovy'
+//                     groovyScript.run_test_script()
+//
+//                 }
+//             }
+//         }
     }
 
     post {
