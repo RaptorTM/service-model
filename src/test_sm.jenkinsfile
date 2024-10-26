@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Load Classes') {
             steps {
-
+script{
 
 //                     def jenkinsRootDir = build.getEnvVars()["JENKINS_HOME"];
 //                     def parent = getClass().getClassLoader()
@@ -27,7 +27,7 @@ pipeline {
 //                     def Services = groovyClass.getConfig()
                     println serviceModelClass.getConfig()['dockerfile']
                     println "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
-
+}
             }
         }
 //         stage('Run main.groovy') {
