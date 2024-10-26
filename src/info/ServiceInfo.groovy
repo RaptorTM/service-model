@@ -1,7 +1,6 @@
 package info
 
 import ci.CiProps
-import info.LandscapeInfo
 import groovy.transform.CompileStatic
 
 import java.nio.file.*
