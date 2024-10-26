@@ -1,7 +1,9 @@
 package modules.config
 
+import groovy.transform.CompileStatic
 import org.yaml.snakeyaml.Yaml
 
+@CompileStatic
 class buildProps {
     def projectBuildProps
 
