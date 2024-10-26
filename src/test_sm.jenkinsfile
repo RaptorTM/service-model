@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     stages {
-        @NonCPS
         stage('Run main.groovy') {
+            @NonCPS
             steps {
                 script {
                     // Загружаем все необходимые файлы
