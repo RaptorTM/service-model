@@ -27,7 +27,7 @@ class ServiceInfo {
             infrastructure: "infrastructure"
     ]
 
-    Map<String,String> getServiceTypes() {
+    static Map<String,String> getServiceTypes() {
         return [
                 dbMigrations: "db-migrations",
                 dotnet: "dotnet",
@@ -91,7 +91,7 @@ class ServiceInfo {
     }
 
     // если не нашла, возвращает null
-    String getServiceTypeByName(String name, serviceModelConfigYaml) {
+    static String getServiceTypeByName(String name, serviceModelConfigYaml) {
         def service = serviceModelConfigYaml['services']
                 .find { svc -> svc['name'] == name }
         return service['type']
@@ -141,7 +141,7 @@ class ServiceInfo {
         return commonArgs + serviceArgs
     }
 
-    boolean pathExist(servicePath) {
+    static boolean pathExist(servicePath) {
         Path path = servicePath;
         return Files.exists(path)
     }

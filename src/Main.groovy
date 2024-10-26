@@ -30,7 +30,7 @@ def run_test_script(){
     println servicesToDeploy
     def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
     println servicesToBuild
-    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
+//    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
 }
 
 run_test_script()

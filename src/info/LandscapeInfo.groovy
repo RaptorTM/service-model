@@ -15,12 +15,12 @@ class LandscapeInfo {
         )
     }
 
-    LandscapeInfo getLandscapeInfoByName(String name) {
+    static LandscapeInfo getLandscapeInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['name'] == name }
         return makeLandscapeInfo(svc)
     }
 
-    LandscapeInfo getLandscapeInfoBySegment(String segmentId) {
+    static LandscapeInfo getLandscapeInfoBySegment(String segmentId, ServiceModelConfig) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['segmentId'] == segmentId }
         return makeLandscapeInfo(svc)
     }
