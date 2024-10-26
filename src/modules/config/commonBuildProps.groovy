@@ -1,13 +1,14 @@
 package modules.config
 
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 class commonBuildProps {
     def commonBuildProps
 
     def getConfig() {
         if (this.commonBuildProps == null) {
-            commonBuildProps = new YamlSlurper().parse(new File('config/common-build-props.yaml'))
+            Yaml yaml = new Yaml();
+            commonBuildProps = yaml.load(('config/common-build-props.yaml'as File).text)
         }
 //        else {
 //            throw new Exception("CommonBuildProps file not found or is empty.")

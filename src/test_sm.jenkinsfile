@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Вытягиваем проект из репозитория
+                git url: 'https://github.com/RaptorTM/service-model.git'
+            }
+        }
+
+        stage('Run main.groovy') {
+            steps {
+                // Запускаем файл main.groovy
+                script {
+                    def groovyScript = load 'main.groovy'
+                    groovyScript.run()
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

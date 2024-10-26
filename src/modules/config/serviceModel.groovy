@@ -1,6 +1,6 @@
 package modules.config
 
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 class serviceModel {
     def serviceModelConfig
@@ -10,7 +10,8 @@ class serviceModel {
             return serviceModelConfig
         }
         else {
-            serviceModelConfig = new YamlSlurper().parse(new File('config/services-model.yaml'))
+            Yaml yaml = new Yaml();
+            serviceModelConfig = yaml.load(('config/services-model.yaml' as File).text)
 //            throw new Exception("serviceModel file not found or is empty.")
         }
         return this.serviceModelConfig

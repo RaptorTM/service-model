@@ -1,13 +1,14 @@
 package modules.config
 
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 class buildProps {
     def projectBuildProps
 
     def getConfig() {
         if (this.projectBuildProps == null) {
-            projectBuildProps = new YamlSlurper().parse(new File('config/build-props.yaml'))
+            Yaml yaml = new Yaml();
+            projectBuildProps = yaml.load(('config/build-props.yaml'as File).text)
         }
 //        else {
 //            throw new Exception("ProjectBuildProps file not found or is empty.")
@@ -15,3 +16,4 @@ class buildProps {
         return this.projectBuildProps
     }
 }
+

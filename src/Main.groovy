@@ -30,7 +30,7 @@ servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModel)
 println servicesToDeploy
 servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
 println servicesToBuild
-build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps)
+build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
 
 
 
@@ -46,11 +46,6 @@ build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps)
 //        serviceInfo.getServiceTypes().python
 //]}
 
-
-
-
-
-
 //@Field serviceModelConfigYaml
 //
 //def serviceModel = new serviceModel()
@@ -61,13 +56,6 @@ build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps)
 //def PrintServiceModel(){
 //  println serviceModelConfigYaml
 //}
-
-
-
-//
-
-
-
 
 //  def serviceModelConfig = serviceModel.getConfig()
 
@@ -83,24 +71,10 @@ build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps)
 //  println projectBuildPropsConfig
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // Создание экземпляров классов с передачей конфигураций
 //def serviceModelConfigInstance = modules.serviceModel.get  serviceModel.getConfig()
 //def commonBuildPropsConfigInstance = new commonBuildProps(CommonBuildProps)
 ////def projectBuildPropsConfigInstance = new buildProps(ProjectBuildProps)
-
-
 
 //try {
 //  // Получение конфигураций через методы классов
