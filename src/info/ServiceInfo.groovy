@@ -1,11 +1,9 @@
 package info
 
 import ci.CiProps
-import groovy.transform.CompileStatic
 
 import java.nio.file.*
 
-@CompileStatic
 class ServiceInfo {
     String buildJob
     String dockerfile
@@ -19,6 +17,7 @@ class ServiceInfo {
     String buildFirst
     CiProps ciProps
     String path
+
 
     Map<String,String> serviceTypes = [
             dbMigrations: "db-migrations",
@@ -37,7 +36,6 @@ class ServiceInfo {
                 infrastructure: "infrastructure",
         ]
     }
-    static def landscapeInfo = new LandscapeInfo()
 
     ServiceInfo makeServiceInfo(svc) {
         return new ServiceInfo(
@@ -46,6 +44,7 @@ class ServiceInfo {
                 image: svc['image'],
                 name: svc['name'],
                 kuberObjectType: svc['type'] == serviceTypes.dbMigrations ? 'job' : 'pod',
+                notInEnvironments: svc['environmentFilter'] ? svc['environmentFilter'].notInEnvironments : [],
                 migrateArgs: svc['type'] == serviceTypes.dbMigrations ? svc['migrateArgs'] : '',
                 type: svc['type'],
                 buildContext: svc['buildContext'] ? svc['buildContext'] : '.',
@@ -69,21 +68,21 @@ class ServiceInfo {
         return infos
     }
 
-//    List<ServiceInfo> getServicesForBuild() {
-//        return getServicesFromModel({ svc -> svc['dockerfile'] != null })
-//    }
-//
-//    List<ServiceInfo> getServicesWithBuildJobs() {
-//        return getServicesFromModel({ svc -> svc['buildJob'] != null })
-//    }
-//
-//    List<ServiceInfo> getServicesByTypeForScanners(String type) {
-//        return getServicesFromModel({ svc -> svc['type'] == type })
-//    }
-//
-//    List<ServiceInfo> getServicesForCi() {
-//        return getServicesFromModel({ svc -> svc['Props.groovy'] != null })
-//    }
+    List<ServiceInfo> getServicesForBuild() {
+        return getServicesFromModel({ svc -> svc['dockerfile'] != null })
+    }
+
+    List<ServiceInfo> getServicesWithBuildJobs() {
+        return getServicesFromModel({ svc -> svc['buildJob'] != null })
+    }
+
+    List<ServiceInfo> getServicesByTypeForScanners(String type) {
+        return getServicesFromModel({ svc -> svc['type'] == type })
+    }
+
+    List<ServiceInfo> getServicesForCi() {
+        return getServicesFromModel({ svc -> svc['Props.groovy'] != null })
+    }
 
 
     ServiceInfo getServiceInfoByName(String name, serviceModelConfigYaml) {
@@ -98,52 +97,52 @@ class ServiceInfo {
         return service['type']
     }
 
-//    public static String getDefaultBuildArgs(String serviceType, String segmentId, String appVersion) {
-//        def landscape = landscapeInfo.getLandscapeInfoBySegment(segmentId, serviceModelConfigYaml)
-//        def buildProps = landscapeInfo.getBuildProps(segmentId)
-//        def commonArgs = "--build-arg DOCKER_REGISTRY=${landscape.mainRegistry} " +
-//                "--build-arg QUAY_DOCKER_REGISTRY=${buildProps.QUAY_DOCKER_REGISTRY} "
-//        def serviceArgs
-//        switch (serviceType) {
-//            case serviceTypes.dbMigrations:
-//                serviceArgs = "--build-arg MIGRATE_BASE_IMAGE=${buildProps.MIGRATE_BASE_IMAGE} "
-//                break;
-//            case serviceTypes.dotnet:
-//                serviceArgs = "--build-arg DOTNET_SDK_BASE_IMAGE=${buildProps.DOTNET_SDK_BASE_IMAGE} " +
-//                        "--build-arg DOTNET_RUNTIME_BASE_IMAGE=${buildProps.DOTNET_RUNTIME_BASE_IMAGE} " +
-//                        "--build-arg NUGET_V3_EXTERNAL=${buildProps.NUGET_V3_EXTERNAL} " +
-//                        "--build-arg APP_VERSION=${appVersion} "
-//                break;
-//            case serviceTypes.front:
-//                serviceArgs = "--build-arg NODEJS_BASE_IMAGE=${buildProps.NODEJS_BASE_IMAGE} " +
-//                        "--build-arg NGINX_BASE_IMAGE=${buildProps.NGINX_BASE_IMAGE} " +
-//                        "--build-arg NPM_REGISTRY=${buildProps.NPM_REGISTRY} " +
-//                        "--build-arg APP_VERSION=${appVersion} "
-//                break;
-//            case serviceTypes.python:
-//                serviceArgs = "--build-arg POETRY_VERSION=${buildProps.POETRY_VERSION} " +
-//                        "--build-arg PYTHON_BASE_IMAGE=${buildProps.PYTHON_BASE_IMAGE} " +
-//                        "--build-arg PIP_INDEX_URL=${buildProps.PIP_INDEX_URL} " +
-//                        "--build-arg PIP_TRUSTED_HOST=${buildProps.PIP_TRUSTED_HOST} " +
-//                        "--build-arg APP_VERSION=${appVersion} "
-//                break;
-//            case serviceTypes.java:
-//                serviceArgs = "--build-arg OPENJDK_BASE_IMAGE=${buildProps.OPENJDK_BASE_IMAGE} " +
-//                        "--build-arg GRADLE_BASE_IMAGE=${buildProps.GRADLE_BASE_IMAGE} " +
-//                        "--build-arg APP_VERSION=${appVersion} "
-//                break;
-//            case serviceTypes.clang:
-//                serviceArgs = "--build-arg APP_VERSION=${appVersion} "
-//                break;
-//            default:
-//                serviceArgs = ""
-//                break;
-//        }
-//        return commonArgs + serviceArgs
-//    }
+    String getDefaultBuildArgs(String serviceType, String segmentId, String appVersion) {
+        def landscape = getLandscapeInfoBySegment(segmentId)
+        def buildProps = getBuildProps(segmentId)
+        def commonArgs = "--build-arg DOCKER_REGISTRY=${landscape.mainRegistry} " +
+                "--build-arg QUAY_DOCKER_REGISTRY=${buildProps.QUAY_DOCKER_REGISTRY} "
+        def serviceArgs
+        switch (serviceType) {
+            case serviceTypes.dbMigrations:
+                serviceArgs = "--build-arg MIGRATE_BASE_IMAGE=${buildProps.MIGRATE_BASE_IMAGE} "
+                break;
+            case serviceTypes.dotnet:
+                serviceArgs = "--build-arg DOTNET_SDK_BASE_IMAGE=${buildProps.DOTNET_SDK_BASE_IMAGE} " +
+                        "--build-arg DOTNET_RUNTIME_BASE_IMAGE=${buildProps.DOTNET_RUNTIME_BASE_IMAGE} " +
+                        "--build-arg NUGET_V3_EXTERNAL=${buildProps.NUGET_V3_EXTERNAL} " +
+                        "--build-arg APP_VERSION=${appVersion} "
+                break;
+            case serviceTypes.front:
+                serviceArgs = "--build-arg NODEJS_BASE_IMAGE=${buildProps.NODEJS_BASE_IMAGE} " +
+                        "--build-arg NGINX_BASE_IMAGE=${buildProps.NGINX_BASE_IMAGE} " +
+                        "--build-arg NPM_REGISTRY=${buildProps.NPM_REGISTRY} " +
+                        "--build-arg APP_VERSION=${appVersion} "
+                break;
+            case serviceTypes.python:
+                serviceArgs = "--build-arg POETRY_VERSION=${buildProps.POETRY_VERSION} " +
+                        "--build-arg PYTHON_BASE_IMAGE=${buildProps.PYTHON_BASE_IMAGE} " +
+                        "--build-arg PIP_INDEX_URL=${buildProps.PIP_INDEX_URL} " +
+                        "--build-arg PIP_TRUSTED_HOST=${buildProps.PIP_TRUSTED_HOST} " +
+                        "--build-arg APP_VERSION=${appVersion} "
+                break;
+            case serviceTypes.java:
+                serviceArgs = "--build-arg OPENJDK_BASE_IMAGE=${buildProps.OPENJDK_BASE_IMAGE} " +
+                        "--build-arg GRADLE_BASE_IMAGE=${buildProps.GRADLE_BASE_IMAGE} " +
+                        "--build-arg APP_VERSION=${appVersion} "
+                break;
+            case serviceTypes.clang:
+                serviceArgs = "--build-arg APP_VERSION=${appVersion} "
+                break;
+            default:
+                serviceArgs = ""
+                break;
+        }
+        return commonArgs + serviceArgs
+    }
 
-    static boolean pathExist(servicePath) {
-        Path path = servicePath as Path;
+    boolean pathExist(servicePath) {
+        Path path = servicePath;
         return Files.exists(path)
     }
 
