@@ -16,8 +16,8 @@ pipeline {
 //                         throw new Exception("Directory 'src\\modules\\config' does not exist")
 //                     }
 
-                    rootDir.eachFileRecurse(FilenameFilter.ACCEPT) { file ->
-                        if (file.name.endsWith('.groovy')) {
+                    rootDir.eachFileRecurse { file ->
+                        if (file.isFile() && file.name.endsWith('.groovy')) {
                             def relativePath = file.path.substring(rootDir.path.size() + 1).replace(File.separatorChar, '.').substring(0, -7)
                             if (relativePath.startsWith(packageName)) {
                                 classes << load("${packageName}.${relativePath}")
