@@ -25,7 +25,7 @@ pipeline {
             steps {
                 // Запускаем файл main.groovy
                 script {
-                    def groovyScript = load 'src/Main.groovy'
+                    def groovyScript = load 'src\\Main.groovy'
                     groovyScript.run_test_script()
 
                 }
