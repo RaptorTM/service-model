@@ -16,7 +16,7 @@ pipeline {
 //                     def loader = new GroovyClassLoader(parent)
 
 //                     def someParameterValue = "abc"
-                    println jenkinsRootDir
+//                     println jenkinsRootDir
 //                     def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
                     def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
 
