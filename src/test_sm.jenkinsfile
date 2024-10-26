@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        @NonCPS
         stage('Run main.groovy') {
             steps {
                 script {
