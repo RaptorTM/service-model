@@ -6,6 +6,7 @@ pipeline {
             steps {
                 script {
                     // Загружаем все необходимые файлы
+                    load 'src/ci/Props.groovy'
                     load 'src/info/ServiceInfo.groovy'
                     load 'src/info/ClusterInfo.groovy'
                     load 'src/info/LandscapeInfo.groovy'
