@@ -1,15 +1,12 @@
 package info
 
-import groovy.transform.CompileStatic
-
-@CompileStatic
-public class LandscapeInfo {
+class LandscapeInfo {
     String name
     String paasId
     String segmentId
     String mainRegistry
 
-    static public LandscapeInfo makeLandscapeInfo(svc) {
+    static LandscapeInfo makeLandscapeInfo(svc) {
         return new LandscapeInfo(
                 name: svc['name'],
                 paasId: svc['paasId'],
@@ -18,12 +15,12 @@ public class LandscapeInfo {
         )
     }
 
-    static LandscapeInfo getLandscapeInfoByName(String name, ServiceModelConfig) {
+    LandscapeInfo getLandscapeInfoByName(String name) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['name'] == name }
         return makeLandscapeInfo(svc)
     }
 
-    static LandscapeInfo getLandscapeInfoBySegment(String segmentId, ServiceModelConfig) {
+    LandscapeInfo getLandscapeInfoBySegment(String segmentId) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['segmentId'] == segmentId }
         return makeLandscapeInfo(svc)
     }
