@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Load Classes') {
             steps {
-script{
+
 
 //                     def jenkinsRootDir = build.getEnvVars()["JENKINS_HOME"];
 //                     def parent = getClass().getClassLoader()
@@ -22,7 +22,7 @@ script{
 //                     def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
 
 
-                    def serviceModelClass = load "src\\modules\\config\\serviceModel.groovy"
+                    serviceModelClass = load "src\\modules\\config\\serviceModel.groovy"
 
 //                     def Services = groovyClass.getConfig()
                     println serviceModelClass.getConfig()['dockerfile']
@@ -39,8 +39,7 @@ script{
 //
 //                 }
 //             }
-//         }
-    }
+
 
     post {
         success {
