@@ -1,0 +1,16 @@
+segments:
+  - id: dev-zone-common-build-props
+    PROJECT_DOCKER_REGISTRY: common-build-props
+    NODEJS_BASE_IMAGE: dev_zone/ubi8/nodejs-20
+    NGINX_BASE_IMAGE: dev_zone/ubi8/nginx-122
+    DOTNET_SDK_BASE_IMAGE: dev_zone/ubi8/dotnet-60
+    DOTNET_RUNTIME_BASE_IMAGE: dev_zone/ubi8/dotnet-60-runtime
+    MIGRATE_BASE_IMAGE: dev_zone/innersource/migrate
+    RABBITMQ_BASE_IMAGE: dev_zone/innersource/rabbitmq
+    ENVOY_BASE_IMAGE: dev_zone/innersource/envoy
+    POSTGRES_BASE_IMAGE: dev_zone/postgres:13.3
+    MINIO_BASE_IMAGE: dev_zone/minio
+    MINIO_CONFIGURATOR_BASE_IMAGE: dev_zone/bitnami/minio-client
+    PGADMIN_BASE_IMAGE: dev_zone/dpage/pgadmin4
+    ANTORA_BASE_IMAGE: dev_zone/innersource/antora
+    NUGET_FEED: https://proxy.repos.devzone.local/repository/nuget-nuget-v3-external-dso/index.json

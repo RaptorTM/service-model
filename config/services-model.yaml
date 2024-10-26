@@ -1,0 +1,452 @@
+# Предназначен для разделения Jenkinsfile-ов на фиксированную и изменяемую части.
+# Если у нас есть M видов джобов Jenkins (сборка, деплой шаблона, деплой, clair, sast,
+# dtrack, ...) и N сервисов (объектов сборки и/или развертывания), то всего
+# Jenkinsfile-ов будет не M * N, а M + 1, где 1 - этот файл с информацией,
+# отличающейся для каждого сервиса
+
+landscapes:
+  - name: test
+    segmentId: devzone
+    mainRegistry: u200004862-registry.repos.devzone.local
+
+clusters:
+  - name: deckhouse
+    landscape: test #название не принципиально, разделяет экземляры
+    cloudApiUrl: https://api.apps.dhd-vkc02.devzone.local #API k8s for auth?
+
+# стенды
+environments:
+  - name: dev
+    cluster: deckhouse #должно быть идентично clusters.landscape
+    cloudNamespace: u200004862
+    appUrlOrSuffix: u200004862.apps.dhd-vkc02.devzone.local # ссылка на фронт приложения по которой можно получить доступ полный url frontend-u200004862.apps.dhd-vkc02.devzone.local
+    configMap: okd-template-devzone.yaml # проверить название конфигмапа в проекте
+
+
+# - элементы одного типа должны иметь одинаковый набор свойств и поведение
+# - фильтры по стендам, как позитивные, так и негативные, ограничивают доступные стенды
+#   (без фильтров будет деплоиться везде)
+#   если задано несколько условий, для деплоя должны выполняться все.
+#   appUrlOrSuffix использутся в шаблонах как APP_URL для GM.Frontend.Core, для остальных - 
+#   в качестве суффикса (<имя-сервиса>-appUrlOrSuffix)
+services:
+  # ================ базовый образ для микросервисов
+  # - name: uber
+  #   type: dotnet
+  #   image: uber
+  #   dockerfile: GpnDs.UBER.Dockerfile
+  #   buildFirst: true
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg NUGET_FEED=$NUGET_FEED
+  #     .
+
+  # # ================ инфраструктура
+  # - name: uber-rabbitmq
+  #   type: infrastructure
+  #   image: uber-rabbitmq
+  #   dockerfile: GpnDs.UBER.RabbitMQ.Dockerfile
+  #   template: okd-uber-rabbitmq.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg RABBITMQ_BASE_IMAGE=$RABBITMQ_BASE_IMAGE
+  #     --build-arg ADMIN_USER=$ADMIN_USER
+  #     --build-arg ADMIN_PASSWORD=$ADMIN_PASSWORD
+  #     --build-arg UBER_RABBIT_NOTIFICATION_PUSHER_USER=$UBER_RABBIT_NOTIFICATION_PUSHER_USER
+  #     --build-arg UBER_RABBIT_NOTIFICATION_PUSHER_PASSWORD=$UBER_RABBIT_NOTIFICATION_PUSHER_PASSWORD
+  #     --build-arg UBER_RABBIT_BFF_USER=$UBER_RABBIT_BFF_USER
+  #     --build-arg UBER_RABBIT_BFF_PASSWORD=$UBER_RABBIT_BFF_PASSWORD
+  #     --build-arg UBER_RABBIT_DOCFLOW_USER=$UBER_RABBIT_DOCFLOW_USER
+  #     --build-arg UBER_RABBIT_DOCFLOW_PASSWORD=$UBER_RABBIT_DOCFLOW_PASSWORD
+  #     --build-arg UBER_RABBIT_WORKFLOW_USER=$UBER_RABBIT_WORKFLOW_USER
+  #     --build-arg UBER_RABBIT_WORKFLOW_PASSWORD=$UBER_RABBIT_WORKFLOW_PASSWORD
+  #     --build-arg UBER_RABBIT_PURCHASE_USER=$UBER_RABBIT_PURCHASE_USER
+  #     --build-arg UBER_RABBIT_PURCHASE_PASSWORD=$UBER_RABBIT_PURCHASE_PASSWORD
+  #     --build-arg UBER_RABBIT_PIR_USER=$UBER_RABBIT_PIR_USER
+  #     --build-arg UBER_RABBIT_PIR_PASSWORD=$UBER_RABBIT_PIR_PASSWORD
+  #     --build-arg UBER_RABBIT_SM_USER=$UBER_RABBIT_SM_USER
+  #     --build-arg UBER_RABBIT_SM_PASSWORD=$UBER_RABBIT_SM_PASSWORD
+  #     --build-arg UBER_RABBIT_MAIL_USER=$UBER_RABBIT_MAIL_USER
+  #     --build-arg UBER_RABBIT_MAIL_PASSWORD=$UBER_RABBIT_MAIL_PASSWORD
+  #     .
+
+  # - name: uber-api-gw
+  #   type: infrastructure
+  #   image: uber-api-gw
+  #   dockerfile: GpnDs.UBER.Envoy.Dockerfile
+  #   template: GpnDs.UBER.Envoy/okd-uber-api-gw.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg ENVOY_BASE_IMAGE=$ENVOY_BASE_IMAGE
+  #     --target final
+  #     .
+
+  # - name: uber-minio
+  #   type: infrastructure
+  #   image: uber-minio
+  #   dockerfile: GpnDs.UBER.Minio.Dockerfile
+  #   template: GpnDs.UBER.Postgres/okd-uber-minio.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg MINIO_BASE_IMAGE=$MINIO_BASE_IMAGE
+  #     .
+
+  # - name: uber-minio-configurator
+  #   type: infrastructure
+  #   image: uber-minio-configurator
+  #   dockerfile: GpnDs.UBER.Minio.Configurator.Dockerfile
+  #   template: GpnDs.UBER.Minio.Configurator/okd-uber-minio-configurator.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg MINIO_CONFIGURATOR_BASE_IMAGE=$MINIO_CONFIGURATOR_BASE_IMAGE
+  #     .
+
+  # # ================ миграции
+  # # все миграции собираются джобом "./Build/build-postgres-migrations"
+  # # шаблона может не быть, если реально файлов миграций нет и деплоить их не надо
+  # # migrateArgs - название секрета с аргументами для миграции, используется внутри env в шаблоне
+
+  # - name: uber-auth-migrations
+  #   type: db-migrations
+  #   image: uber-auth-migrations
+  #   dockerfile: GpnDs.UBER.Authorization.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-comment-migrations
+  #   type: db-migrations
+  #   image: uber-comment-migrations
+  #   dockerfile: GpnDs.UBER.Comment.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-docflow-migrations
+  #   type: db-migrations
+  #   image: uber-docflow-migrations
+  #   dockerfile: GpnDs.UBER.Docflow.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-erd-migrations
+  #   type: db-migrations
+  #   image: uber-erd-migrations
+  #   dockerfile: GpnDs.UBER.ERD.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-nir-migrations
+  #   type: db-migrations
+  #   image: uber-nir-migrations
+  #   dockerfile: GpnDs.UBER.NIR.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-nsi-migrations
+  #   type: db-migrations
+  #   image: uber-nsi-migrations
+  #   dockerfile: GpnDs.UBER.NSI.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-pir-migrations
+  #   type: db-migrations
+  #   image: uber-pir-migrations
+  #   dockerfile: GpnDs.UBER.PIR.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-ptd-migrations
+  #   type: db-migrations
+  #   image: uber-ptd-migrations
+  #   dockerfile: GpnDs.UBER.PTD.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-purchase-migrations
+  #   type: db-migrations
+  #   image: uber-purchase-migrations
+  #   dockerfile: GpnDs.UBER.Purchase.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-sm-migrations
+  #   type: db-migrations
+  #   image: uber-sm-migrations
+  #   dockerfile: GpnDs.UBER.ServiceManager.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-vuz-migrations
+  #   type: db-migrations
+  #   image: uber-vuz-migrations
+  #   dockerfile: GpnDs.UBER.VUZ.Migrations.Dockerfile
+  #   template: ''
+  #   environmentFilter:
+  #     notInEnvironments: [dev]
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .
+
+  # # =========== dotnet
+
+  # - name: uber-auth
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.Authorization
+  #   type: dotnet
+  #   image: uber-auth
+  #   dockerfile: GpnDs.UBER.Authorization.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-auth.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  - name: uber-bff
+    path: src/GpnDs.UBER.Services/GpnDs.UBER.BFF
+    type: dotnet
+    image: uber-bff
+    dockerfile: GpnDs.UBER.BFF.Dockerfile
+    template: GpnDs.UBER.Backend/okd-uber-bff.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+      .
+  #   Props:
+  #     runBuild: true
+  #     buildArgs: "--no-restore"
+  #     runTests: true
+  #     testArgs: "--filter \"TestCategory=UnitTests\""
+  #     runRestore: true
+  #     restoreArgs: "--configfile \"src/nuget.config\""
+  #     checkSwagger: false
+  #     runCoverage: true
+
+  - name: uber-tests
+    path: src
+    type: dotnet
+    image: uber-tests
+    dockerfile: ''
+    template: ''
+    ciProps:
+      runBuild: true
+      buildArgs: "--no-restore"
+      runTests: true
+      testArgs: "--filter \"TestCategory=UnitTests\""
+      runRestore: true
+      restoreArgs: "--configfile \"src/nuget.config\""
+      checkSwagger: false
+      runCoverage: true
+    environmentFilter:
+      notInEnvironments: [dev]
+
+  - name: uber-comment
+    path: src/GpnDs.UBER.Services/GpnDs.UBER.Comment
+    type: dotnet
+    image: uber-comment
+    dockerfile: GpnDs.UBER.Comment.Dockerfile
+    template: GpnDs.UBER.Backend/okd-uber-comment.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+      .
+
+  - name: uber-docflow
+    path: src/GpnDs.UBER.Services/GpnDs.UBER.Docflow
+    type: dotnet
+    image: uber-docflow
+    dockerfile: GpnDs.UBER.Docflow.Dockerfile
+    template: GpnDs.UBER.Backend/okd-uber-docflow.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+      .
+
+  - name: uber-erd
+    path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.ERD
+    type: dotnet
+    image: uber-erd
+    dockerfile: GpnDs.UBER.ERD.Dockerfile
+    template: GpnDs.UBER.Backend/okd-uber-erd.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+      .
+
+  - name: uber-mail
+    path: src/GpnDs.UBER.Services/GpnDs.UBER.Mail
+    type: dotnet
+    image: uber-mail
+    dockerfile: GpnDs.UBER.Mail.Dockerfile
+    template: GpnDs.UBER.Backend/okd-uber-mail.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+      .
+
+  # - name: uber-nir
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.NIR
+  #   type: dotnet
+  #   image: uber-nir
+  #   dockerfile: GpnDs.UBER.NIR.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-nir.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-nsi
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.NSI
+  #   type: dotnet
+  #   image: uber-nsi
+  #   dockerfile: GpnDs.UBER.NSI.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-nsi.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-pir
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.PIR
+  #   type: dotnet
+  #   image: uber-pir
+  #   dockerfile: GpnDs.UBER.PIR.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-pir.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-ptd
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.PTD
+  #   type: dotnet
+  #   image: uber-ptd
+  #   dockerfile: GpnDs.UBER.PTD.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-ptd.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-purchase
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.Purchase
+  #   type: dotnet
+  #   image: uber-purchase
+  #   dockerfile: GpnDs.UBER.Purchase.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-purchase.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-report
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.Report
+  #   type: dotnet
+  #   image: uber-report
+  #   dockerfile: GpnDs.UBER.Report.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-report.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-sm
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.ServiceManager
+  #   type: dotnet
+  #   image: uber-sm
+  #   dockerfile: GpnDs.UBER.ServiceManager.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-sm.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-vuz
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.ServiceManager/GpnDs.UBER.VUZ
+  #   type: dotnet
+  #   image: uber-vuz
+  #   dockerfile: GpnDs.UBER.VUZ.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-vuz.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # - name: uber-workflow
+  #   path: src/GpnDs.UBER.Services/GpnDs.UBER.Workflow.Dockerfile
+  #   type: dotnet
+  #   image: uber-workflow
+  #   dockerfile: GpnDs.UBER.Workflow.Dockerfile
+  #   template: GpnDs.UBER.Backend/okd-uber-workflow.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     --build-arg PROJECT_DOCKER_REGISTRY=$PROJECT_DOCKER_REGISTRY
+  #     .
+
+  # # # ================= frontend
+
+  - name: uber-frontend
+    path: src/GpnDs.UBER.Frontend
+    type: front
+    image: uber-frontend
+    dockerfile: GpnDs.UBER.Frontend.Dockerfile
+    template: GpnDs.UBER.Frontend/okd-uber-frontend.yaml
+    buildContext: >
+      --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+      .
+    ciProps:
+      runBuild: true
+      runTests: true
+      runInstall: true
+      runTypeCheck: true
+      runStyleCheck: true
+
+  # - name: uber-frontend-nir
+  #   path: src/GpnDs.UBER.Frontend.NIR
+  #   type: front
+  #   image: uber-frontend-nir
+  #   dockerfile: GpnDs.UBER.FrontendNIR.Dockerfile
+  #   template: GpnDs.UBER.Frontend/okd-uber-frontend-nir.yaml
+  #   buildContext: >
+  #     --build-arg DOCKER_REGISTRY=$QUAY_DOCKER_REGISTRY
+  #     .

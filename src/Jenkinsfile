@@ -1,0 +1,592 @@
+#!groovy
+
+// import shared library
+@Library("dsoLibrary@master") _
+
+import groovy.transform.Field
+// Аннотация @Field используется для того, чтобы преобразовать
+// локальную переменную скрипта в приватное поле скриптового класса
+// http://docs.groovy-lang.org/2.4.12/html/gapi/groovy/transform/Field.html
+
+// Классы, получаемые из services-model
+def cluster
+def landscape
+def deployEnvironment
+def servicesToDeploy
+def servicesToBuild
+// Скрипты из common.groovy
+def scripts
+// Получаемые из params
+@Field private userSelectedServiceTypes = []
+@Field private userSelectedServiceNames = []
+@Field private namesOfServicesToSkip = []
+// APP_VERSION может принимать занчение из параметров или из ветки
+def APP_VERSION
+def CREATION_TIMESTAMP_UNIX_TIME_IN_SECONDS
+
+def /* bool */ shouldProcessService(def /* ServiceInfo */ service) {
+    return !namesOfServicesToSkip.contains(service.name) &&
+        (params.ALL_SERVICES || userSelectedServiceTypes.contains(service.type) || userSelectedServiceNames.contains(service.name))
+}
+
+def /* bool */ shouldBuildService(def /* String */ tagsFromRegistryAsJson, String appVersion) {
+    return !readJSON(text: tagsFromRegistryAsJson).tags.contains(appVersion) || params.FORCE_BUILD
+}
+
+def void runBuildJobs(services, appVersion) {
+    def job = "./build/build-common"
+    def listOfBuildJobs = [:]
+    def commonParams = [
+        string(name: 'APP_VERSION', value: appVersion),
+        string(name: 'BRANCH', value: params.BRANCH),
+        booleanParam(name: 'DRY_RUN', value: params.DRY_RUN),
+        string(name: 'BUILD_ENVIRONMENT', value: params.BUILD_ENVIRONMENT),
+    ]
+    for (s in services) {
+        def parameters = commonParams + [
+            string(name: 'SERVICE_NAME', value: s.name),
+        ]
+        if (!listOfBuildJobs.containsKey(s.image) && shouldProcessService(s)) {
+            listOfBuildJobs[s.image] = { build(job: job, parameters: parameters) }
+        }
+    }
+    if (!listOfBuildJobs.isEmpty() && !params.DRY_RUN) {
+        parallel listOfBuildJobs
+    }
+}
+
+def orphanServices = ''
+def servicesListFromModel = []
+def serviceListFromOC = []
+def emailNotifText = ''
+
+withFolderProperties {
+    HUB_PROJECT_ID = env.HUB_PROJECT_ID
+}
+
+def registry_rw_usr = "${HUB_PROJECT_ID}-repos-w"
+def registry_ro_usr = "${HUB_PROJECT_ID}-repos-r"
+def kube_token_key = "${HUB_PROJECT_ID}-token"
+
+def vault_secrets = [
+    [
+        path: "devzone/project/${HUB_PROJECT_ID}/sa/repos",
+        engineVersion: 2,
+        secretValues: [
+            [envVar: 'registry_rw_pwd', vaultKey: registry_rw_usr],
+            [envVar: 'registry_ro_pwd', vaultKey: registry_ro_usr]
+        ]
+    ],
+    [
+        path: "devzone/project/${HUB_PROJECT_ID}/sa/caas/communal",
+        engineVersion: 2,
+        secretValues: [
+            [envVar: 'KUBE_TOKEN', vaultKey: kube_token_key],
+        ]
+    ],
+]
+
+
+pipeline {
+    agent any
+
+    parameters {
+        gitParameter(
+            defaultValue: 'origin/master',
+            name: 'BRANCH',
+            type: 'PT_BRANCH_TAG',
+            quickFilterEnabled: true,
+            listSize: '15',
+        )
+        string(
+            name: 'APP_VERSION',
+            description: 'Если не указывать, то будет использована последняя версия',
+        )
+        choice(
+            name: 'BUILD_ENVIRONMENT',
+            choices: [
+                'devzone',
+                'trust',
+                'dev',
+            ]
+        )
+        choice(
+            name: 'TARGET_DEPLOY_ENV',
+            choices: [
+                'devzone',
+            ],
+            description: 'Параметр указывается обязательно'
+        )
+        booleanParam(name: 'BUILD', defaultValue: false, description: 'Выполнить сборку')
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Выполнить деплой')
+        booleanParam(name: 'ALL_SERVICES', defaultValue: false, description: 'Все перечисленные')
+        booleanParam(name: 'MIGRATIONS', defaultValue: false, description: 'Миграции')
+        booleanParam(name: 'INFRASTRUCTURE', defaultValue: false, description: 'Инфраструктура')
+        booleanParam(name: 'DOTNET', defaultValue: false, description: 'Сервисы dotnet')
+        booleanParam(name: 'FRONT', defaultValue: false, description: 'Микрофронтэнды')
+        booleanParam(name: 'PYTHON', defaultValue: false, description: 'Сервисы на Python')
+        booleanParam(name: 'CONFIG_MAPS', defaultValue: false, description: 'Configmaps (только для деплоя)')
+        text(
+            name: 'LIST_OF_SERVICE_NAMES',
+            defaultValue: '',
+            description:
+                'Список сервисов для сборки и деплоя через пробел ' +
+                'Дополняет собой спиcок сервисов, задаваемых чекбоксами технологических стеков. ' +
+                'Действует, если не пустой',
+        )
+        text(
+            name: 'SERVICES_TO_SKIP',
+            defaultValue: '',
+            description:
+                'Список сервисов, которые не нужно собирать или деплоить, через пробел ' +
+                'Исключает сервисы из списка, сформированного по именам, типам или через ALL_SERVICES. ' +
+                'Действует, если не пустой',
+        )
+        booleanParam(
+            name: 'FORCE_BUILD',
+            defaultValue: false,
+            description: 'Принудительно выполнить сборку даже если образ этой версии уже есть в репозитории. ' +
+                '(может потребоваться повторный деплой во всех ландшафтах, где развернута эта версия)'
+        )
+        booleanParam(
+            name: 'DRY_RUN',
+            defaultValue: false,
+            description: 'Тестовый запуск (выполнение сценария без запуска build и deploy). '
+        )
+        booleanParam(
+            name: 'DEPLOY_ALL_WITH_SUBCHARTS',
+            defaultValue: false,
+            description: 'Если вы используете subcharts HELM, данный выбор задиплоит весь чарт.'
+        )
+        string(
+            name: 'PROJECT_NAME',
+            defaultValue: 'project',
+            description: 'Название проекта для деплоя через subcharts HELM. ' +
+                'Нельзя оставлять пустым, если используется DEPLOY_ALL_WITH_SUBCHARTS. ' +
+                'По умолчанию project',
+        )
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+    }
+
+    environment {
+        GIT_TAG_APP_VERSION_ONLY_FROM_NUMBERS = sh(returnStdout: true, script: "sh ci/devzone-tools/jenkins/common/app-version.sh \${APP_VERSION}").trim()
+    }
+
+    stages {
+        stage("Init scripts and other variables") {
+            steps {
+                script {
+                    scripts = load "./ci/devzone-tools/jenkins/common/common.groovy"
+                    userSelectedServiceTypes += (params.MIGRATIONS)? 'db-migrations': ''
+                    userSelectedServiceTypes += (params.DOTNET)? 'dotnet': ''
+                    userSelectedServiceTypes += (params.FRONT)? 'front': ''
+                    userSelectedServiceTypes += (params.PYTHON)? 'python': ''
+                    userSelectedServiceTypes += (params.INFRASTRUCTURE)? 'infrastructure': ''
+                    userSelectedServiceTypes -= ''
+                    userSelectedServiceNames = params.LIST_OF_SERVICE_NAMES.split(/\s+/)
+                    namesOfServicesToSkip = params.SERVICES_TO_SKIP.split(/\s+/)
+                    APP_VERSION = params.APP_VERSION?.trim() ?: "$GIT_TAG_APP_VERSION_ONLY_FROM_NUMBERS"
+                    deployEnvironment = scripts.getDeployEnvironmentInfoByName(params.TARGET_DEPLOY_ENV)
+                    cluster = scripts.getClusterInfoByName(deployEnvironment.cluster)
+                    landscape = scripts.getLandscapeInfoByName(cluster.landscape)
+                    servicesToDeploy = scripts.getAllServicesFromModel()
+                    scripts.setBuildPropsAsEnvVars(params.BUILD_ENVIRONMENT)
+                }
+            }
+        }
+
+        stage("Set build name") {
+            steps {
+                wrap([$class: 'BuildUser']) {
+                    script {
+                        buildName "$BUILD_NUMBER${params.BRANCH? '-' + params.BRANCH : ''}-$APP_VERSION${params.TARGET_DEPLOY_ENV? '-' + params.TARGET_DEPLOY_ENV : ''}"
+                    }
+                    buildDescription "Executed @ ${NODE_NAME}. Build started by ${BUILD_USER}"
+                }
+            }
+        }
+
+        stage("Docker login") {
+            steps {
+                withVault([vaultSecrets: vault_secrets]) {
+                    sh """
+                        docker login ${landscape.mainRegistry} -u ${registry_rw_usr} -p \${registry_rw_pwd}
+                        docker login ${QUAY_DOCKER_REGISTRY} -u ${registry_ro_usr} -p \${registry_ro_pwd}
+                    """
+                }
+            }
+        }
+
+        stage("Build") {
+            when {
+                expression { return params.BUILD }
+            }
+
+            stages {
+                stage("Init build variables") {
+                    steps {
+                        script {
+                            servicesToBuild = scripts.getAllServicesFromModel()
+                        }
+                    }
+                }
+
+                stage("Build services and/or migrations") {
+                    failFast true
+
+                    steps {
+                        script {
+                            // listOfBuildFirst - образы, которые необходимо собрать первыми.
+                            // Для них выставляется buildFirst: true в services-model.yaml.
+                            // Например, какие-то базовые образы, которые будут использоваться при сборке других образов
+                            // (dotnet решения с кодом всех проектов csproj и т.п.)
+                            def buildFirstServices = servicesToBuild.findAll {it.buildFirst == true}
+                            def buildRegularServices = servicesToBuild - buildFirstServices
+                            runBuildJobs(buildFirstServices, "$APP_VERSION")
+                            runBuildJobs(buildRegularServices, "$APP_VERSION")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Deploy") {
+            when {
+                expression { return params.DEPLOY && (params.TARGET_DEPLOY_ENV?.trim() ?: '') != '' }
+            }
+
+            environment {
+                APP_URL_OR_SUFFIX = ''
+                REGISTRY = ''
+                CLUSTER_API_URL = ''
+                PROJECT_NAMESPACE = ''
+                JENKINS_UID = sh(script: "id -u", returnStdout:true).trim()
+                JENKINS_GID = sh(script: "id -g", returnStdout:true).trim()
+                HELM_VALUES_PATH = '/charts/services/values'
+            }
+
+            stages {
+                stage("Init deploy variables") {
+                    steps {
+                        script {
+                            APP_URL_OR_SUFFIX = deployEnvironment.appUrlOrSuffix
+                            PROJECT_NAMESPACE = deployEnvironment.cloudNamespace
+                            REGISTRY = landscape.mainRegistry
+                            CLUSTER_API_URL = cluster.cloudApiUrl
+                            CREATION_TIMESTAMP_UNIX_TIME_IN_SECONDS = "${new Date().getTime()}".substring(0, 10)
+                        }
+                    }
+                }
+
+                stage("Add Docker credentials to k8s secrets") {
+                    steps {
+                        withVault([vaultSecrets: vault_secrets]) {
+                            script {
+                                sh """
+                                    kubectl create secret docker-registry project-registry-secret \
+                                    --docker-username=${registry_ro_usr} \
+                                    --docker-password=\${registry_ro_pwd} \
+                                    --docker-server=${REGISTRY} \
+                                    --save-config \
+                                    --dry-run=client \
+                                    -o yaml | kubectl apply -f - \
+                                    --token "${KUBE_TOKEN}" \
+                                    -n ${PROJECT_NAMESPACE} \
+                                    --server "${CLUSTER_API_URL}" \
+                                    --insecure-skip-tls-verify && \
+                                    kubectl patch serviceaccount default \
+                                    --token "${KUBE_TOKEN}" \
+                                    -n ${PROJECT_NAMESPACE} \
+                                    --server "${CLUSTER_API_URL}" \
+                                    --insecure-skip-tls-verify \
+                                    -p '{"imagePullSecrets": [{"name": "project-registry-secret"}]}'
+                                """
+                            }
+                        }
+                    }
+                }
+
+                stage("Deploy infrastructure and services") {
+                    agent {
+                        docker {
+                            image "${QUAY_DOCKER_REGISTRY}/commondev/tools/helm"
+                            reuseNode true
+                            args """--entrypoint '' \
+                                -v $WORKSPACE/ci/helm:/charts \
+                                -e HELM_CONFIG_HOME=/charts \
+                                -u ${env.JENKINS_UID}:${env.JENKINS_GID}
+                            """
+                        }
+                    }
+
+                    stages {
+                        stage("Deploy configmaps") {
+                            when {
+                                expression {
+                                    return !params.DEPLOY_ALL_WITH_SUBCHARTS && (params.CONFIG_MAPS || params.ALL_SERVICES)
+                                !params.DEPLOY_ALL_WITH_SUBCHARTS
+                                }
+                            }
+                            environment {
+                                deployServiceTimeout = '300s'
+                            }
+
+                            steps {
+                                withVault([vaultSecrets: vault_secrets]) {
+                                    script {
+                                        def valuesOpt = "--values ${HELM_VALUES_PATH}/default/configmap.yaml"
+                                        def envValuesPath = "${HELM_VALUES_PATH}/${params.TARGET_DEPLOY_ENV}/configmap.yaml"
+                                        echo "===== Deploy configmap to ${params.TARGET_DEPLOY_ENV} ====="
+                                        sh """
+                                            if [ -f ${envValuesPath} ]; then
+                                                VALUES_OPT="${valuesOpt} --values ${envValuesPath}"
+                                            else
+                                                VALUES_OPT="${valuesOpt}"
+                                            fi
+
+                                            helm upgrade ${HUB_PROJECT_ID}-${JOB_BASE_NAME}-environment \
+                                                /charts/services \
+                                                --kube-apiserver="${CLUSTER_API_URL}" \
+                                                --kube-token="${KUBE_TOKEN}" \
+                                                --kube-insecure-skip-tls-verify \
+                                                --install \
+                                                --atomic \
+                                                -n ${PROJECT_NAMESPACE} \
+                                                --timeout=$deployServiceTimeout \
+                                                \$VALUES_OPT \
+                                                --wait \
+                                                --wait-for-jobs \
+                                                --set namespace=${PROJECT_NAMESPACE} \
+                                                --set appVersion=${APP_VERSION} \
+                                                ${params.DRY_RUN ? '--dry-run --debug' : ''}
+                                        """
+                                    }
+                                }
+                            }
+                        }
+
+                        stage("Deploy infrastructure") {
+                            when {
+                                expression {
+                                    return !params.DEPLOY_ALL_WITH_SUBCHARTS
+                                }
+                            }
+                            environment {
+                                deployServiceTimeout = '300s'
+                            }
+
+                            steps {
+                                withVault([vaultSecrets: vault_secrets]) {
+                                    script {
+                                        echo "===== Deploy infrastructure to ${PROJECT_NAMESPACE} ====="
+                                        for (s in servicesToDeploy.findAll {it.type == scripts.getServiceTypes().infrastructure}) {
+                                            if (shouldProcessService(s)) {
+                                                if (s.notInEnvironments.contains(params.TARGET_DEPLOY_ENV)) {
+                                                    echo "${s.name} is not available in ${params.TARGET_DEPLOY_ENV}. Skipped"
+                                                    continue
+                                                }
+                                                def valuesOpt = "--values ${HELM_VALUES_PATH}/default/${s.name}.yaml"
+                                                def envValuesPath = "${HELM_VALUES_PATH}/${params.TARGET_DEPLOY_ENV}/${s.name}.yaml"
+                                                echo "===== Deploy ${s.image} to ${params.TARGET_DEPLOY_ENV} ====="
+                                                sh """
+                                                    if [ -f ${envValuesPath} ]; then
+                                                        VALUES_OPT="${valuesOpt} --values ${envValuesPath}"
+                                                    else
+                                                        VALUES_OPT="${valuesOpt}"
+                                                    fi
+
+                                                    helm upgrade ${s.name} \
+                                                        /charts/services \
+                                                        --kube-apiserver="${CLUSTER_API_URL}" \
+                                                        --kube-token="${KUBE_TOKEN}" \
+                                                        --kube-insecure-skip-tls-verify \
+                                                        --install \
+                                                        --atomic \
+                                                        -n ${PROJECT_NAMESPACE} \
+                                                        --timeout=$deployServiceTimeout \
+                                                        \$VALUES_OPT \
+                                                        --wait \
+                                                        --wait-for-jobs \
+                                                        --set namespace=${PROJECT_NAMESPACE} \
+                                                        --set registry=${REGISTRY} \
+                                                        --set appVersion=${APP_VERSION} \
+                                                        --set imageName=${s.image} \
+                                                        --set updImageNotChanged=true \
+                                                        ${params.DRY_RUN ? '--dry-run --debug' : ''}
+                                                """
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        stage("Deploy migrations") {
+                            when {
+                                expression {
+                                    return !params.DEPLOY_ALL_WITH_SUBCHARTS
+                                }
+                            }
+                            environment {
+                                deployMigrationTimeout = '600s'
+                            }
+
+                            steps {
+                                withVault([vaultSecrets: vault_secrets]) {
+                                    script {
+                                        echo "===== Deploy migrations to ${params.TARGET_DEPLOY_ENV} ====="
+                                        for (s in servicesToDeploy.findAll {it.type == scripts.getServiceTypes().dbMigrations}) {
+                                            if (shouldProcessService(s)) {
+                                                if (s.notInEnvironments.contains(params.TARGET_DEPLOY_ENV)) {
+                                                    echo "${s.name} is not available in ${params.TARGET_DEPLOY_ENV}. Skipped"
+                                                    continue
+                                                }
+                                                def valuesOpt = "--values ${HELM_VALUES_PATH}/default/${s.name}.yaml"
+                                                def envValuesPath = "${HELM_VALUES_PATH}/${params.TARGET_DEPLOY_ENV}/${s.name}.yaml"
+                                                echo "===== Deploy ${s.name} to ${params.TARGET_DEPLOY_ENV} ====="
+                                                sh """
+                                                    if [ -f ${envValuesPath} ]; then
+                                                        VALUES_OPT="${valuesOpt} --values ${envValuesPath}"
+                                                    else
+                                                        VALUES_OPT="${valuesOpt}"
+                                                    fi
+
+                                                    helm upgrade ${s.name} \
+                                                        /charts/services \
+                                                        --kube-apiserver="${CLUSTER_API_URL}" \
+                                                        --kube-token="${KUBE_TOKEN}" \
+                                                        --kube-insecure-skip-tls-verify \
+                                                        --install \
+                                                        --wait \
+                                                        --wait-for-jobs \
+                                                        -n ${PROJECT_NAMESPACE} \
+                                                        --timeout=$deployMigrationTimeout \
+                                                        \$VALUES_OPT \
+                                                        --set namespace=${PROJECT_NAMESPACE} \
+                                                        --set registry=${REGISTRY} \
+                                                        --set appVersion=${APP_VERSION} \
+                                                        --set imageName=${s.image} \
+                                                        ${params.DRY_RUN ? '--dry-run --debug' : ''}
+                                                """
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        stage ("Deploy apps") {
+                            when {
+                                expression {
+                                    return !params.DEPLOY_ALL_WITH_SUBCHARTS
+                                }
+                            }
+                            environment {
+                                deployServiceTimeout = '300s'
+                            }
+
+                            steps {
+                                withVault([vaultSecrets: vault_secrets]) {
+                                    script {
+                                        echo "===== Deploy apps to ${params.TARGET_DEPLOY_ENV} ====="
+                                        for (s in servicesToDeploy.findAll {it.type in [
+                                            scripts.getServiceTypes().dotnet,
+                                            scripts.getServiceTypes().front,
+                                            scripts.getServiceTypes().python
+                                        ]})
+                                        {
+                                            if (shouldProcessService(s)) {
+                                                if (s.notInEnvironments.contains(params.TARGET_DEPLOY_ENV)) {
+                                                    echo "${s.name} is not available in ${params.TARGET_DEPLOY_ENV}. Skipped"
+                                                    continue
+                                                }
+                                                def valuesOpt = "--values ${HELM_VALUES_PATH}/default/${s.name}.yaml"
+                                                def envValuesPath = "${HELM_VALUES_PATH}/${params.TARGET_DEPLOY_ENV}/${s.name}.yaml"
+                                                echo "===== Deploy ${s.name} to ${params.TARGET_DEPLOY_ENV} ====="
+
+                                                sh """
+                                                    if [ -f ${envValuesPath} ]; then
+                                                        VALUES_OPT="${valuesOpt} --values ${envValuesPath}"
+                                                    else
+                                                        VALUES_OPT="${valuesOpt}"
+                                                    fi
+
+                                                    helm upgrade ${s.name} \
+                                                        /charts/services \
+                                                        --kube-apiserver="${CLUSTER_API_URL}" \
+                                                        --kube-token="${KUBE_TOKEN}" \
+                                                        --kube-insecure-skip-tls-verify \
+                                                        --install \
+                                                        --atomic \
+                                                        -n ${PROJECT_NAMESPACE} \
+                                                        --timeout=$deployServiceTimeout \
+                                                        \$VALUES_OPT \
+                                                        --wait \
+                                                        --wait-for-jobs \
+                                                        --set namespace=${PROJECT_NAMESPACE} \
+                                                        --set registry=${REGISTRY} \
+                                                        --set appVersion=${APP_VERSION} \
+                                                        --set imageName=${s.image} \
+                                                        --set updImageNotChanged=true \
+                                                        ${params.DRY_RUN ? '--dry-run --debug' : ''}
+                                                """
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        stage ("Deploy all") {
+                            when {
+                                expression {
+                                    return params.DEPLOY_ALL_WITH_SUBCHARTS
+                                }
+                            }
+                            environment {
+                                deployServiceTimeout = '300s'
+                            }
+
+                            steps {
+                                withVault([vaultSecrets: vault_secrets]) {
+                                    script {
+                                        def valuesOpt = "--values ${HELM_VALUES_PATH}/default/${params.PROJECT_NAME}.yaml"
+                                        def envValuesPath = "${HELM_VALUES_PATH}/${params.TARGET_DEPLOY_ENV}/${params.PROJECT_NAME}.yaml"
+                                        echo "===== Deploy ${params.PROJECT_NAME} to ${params.TARGET_DEPLOY_ENV} ====="
+                                        sh """
+                                            if [ -f ${envValuesPath} ]; then
+                                                VALUES_OPT="${valuesOpt} --values ${envValuesPath}"
+                                            else
+                                                VALUES_OPT="${valuesOpt}"
+                                            fi
+
+                                            helm upgrade ${params.PROJECT_NAME} \
+                                                /charts/services \
+                                                --kube-apiserver="${CLUSTER_API_URL}" \
+                                                --kube-token="${KUBE_TOKEN}" \
+                                                --kube-insecure-skip-tls-verify \
+                                                --install \
+                                                --atomic \
+                                                -n ${PROJECT_NAMESPACE} \
+                                                --timeout=$deployServiceTimeout \
+                                                \$VALUES_OPT \
+                                                --wait \
+                                                --wait-for-jobs \
+                                                --set namespace=${PROJECT_NAMESPACE} \
+                                                --set registry=${REGISTRY} \
+                                                --set appVersion=${APP_VERSION} \
+                                                ${params.DRY_RUN ? '--dry-run --debug' : ''}
+                                        """
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
