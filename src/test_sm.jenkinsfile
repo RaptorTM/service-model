@@ -17,7 +17,7 @@ pipeline {
 
 //                     def someParameterValue = "abc"
                     println jenkinsRootDir
-                    def groovyClass = loader.parseClass(readFile "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test-service-model\\src\\modules\\config\\serviceModel.groovy").newInstance()
+                    def groovyClass = loader.parseClass(readFile 'C:\ProgramData\Jenkins\.jenkins\workspace\test-service-model\src\modules\config\serviceModel.groovy').newInstance()
 
                     def Services = groovyClass.getConfig()
                     println Services['dockerfile']
