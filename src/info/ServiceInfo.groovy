@@ -1,10 +1,11 @@
 package info
 
 import ci.CiProps
+import groovy.transform.CompileStatic
 
 import java.nio.file.*
 
-
+@CompileStatic
 class ServiceInfo {
     String buildJob
     String dockerfile

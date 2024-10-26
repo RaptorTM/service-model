@@ -1,5 +1,8 @@
 package info
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class DeployEnvironmentInfo {
     String name
     String cluster
@@ -33,6 +36,6 @@ class DeployEnvironmentInfo {
     List<String> getAllEnvironmentNames(ServiceModelConfig) {
         def envNames = ServiceModelConfig['environments']
                 .collect { env -> return env['name'] }
-        return envNames
+        return envNames as List<String>
     }
 }

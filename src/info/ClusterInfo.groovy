@@ -1,5 +1,8 @@
 package info
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class ClusterInfo {
     String name
     String landscape

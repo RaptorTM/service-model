@@ -1,5 +1,8 @@
 package info
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class LandscapeInfo {
     String name
     String paasId
