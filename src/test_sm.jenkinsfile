@@ -24,7 +24,7 @@ pipeline {
                     groovyScript.run_test_script()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
-                    def build = new build()
+//                      def build = new build()
                     println Services['dockerfile']
 
                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
