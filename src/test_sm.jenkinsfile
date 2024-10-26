@@ -3,6 +3,8 @@ import hudson.model.*
 import java.io.File;
 import jenkins.model.Jenkins;
 
+def groovyClass = evaluate readTrusted("src\\modules\\config\\serviceModel.groovy")
+
 pipeline {
     agent any
 
@@ -19,11 +21,11 @@ pipeline {
 //                     println jenkinsRootDir
 //                     def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
 
-//                     def groovyClass = evaluate readTrusted("src\\modules\\config\\serviceModel.groovy")
-// //                     def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
-//
-//                     def Services = groovyClass.getConfig()
-//                     println Services['dockerfile']
+
+//                     def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
+
+                    def Services = groovyClass.getConfig()
+                    println Services['dockerfile']
                     println "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
                 }
             }
