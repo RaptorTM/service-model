@@ -1,11 +1,11 @@
-package modules.smConfig
+package modules.config
 
 import groovy.yaml.YamlSlurper
 
-class ProjectBuildPropsConfig {
+class buildProps {
     def projectBuildProps
 
-    def getProjectBuildProps() {
+    def getConfig() {
         if (this.projectBuildProps == null) {
             projectBuildProps = new YamlSlurper().parse(new File('config/build-props.yaml'))
         }

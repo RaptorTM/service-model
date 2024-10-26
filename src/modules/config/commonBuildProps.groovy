@@ -1,11 +1,11 @@
-package modules.smConfig
+package modules.config
 
 import groovy.yaml.YamlSlurper
 
-class CommonBuildPropsConfig {
+class commonBuildProps {
     def commonBuildProps
 
-    def getCommonBuildProps() {
+    def getConfig() {
         if (this.commonBuildProps == null) {
             commonBuildProps = new YamlSlurper().parse(new File('config/common-build-props.yaml'))
         }

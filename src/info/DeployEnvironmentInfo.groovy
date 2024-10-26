@@ -11,7 +11,7 @@ class DeployEnvironmentInfo {
     String configMap
     String storageClassForSeismicData
 
-    DeployEnvironmentInfo makeDeployEnvironmentInfo(svc) {
+    static DeployEnvironmentInfo makeDeployEnvironmentInfo(svc) {
         return new DeployEnvironmentInfo(
                 name: svc['name'],
                 cluster: svc['cluster'],
@@ -25,12 +25,12 @@ class DeployEnvironmentInfo {
         )
     }
 
-    DeployEnvironmentInfo getDeployEnvironmentInfoByName(String name) {
+    DeployEnvironmentInfo getDeployEnvironmentInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['environments'].find { svc -> svc['name'] == name }
         return makeDeployEnvironmentInfo(svc)
     }
 
-    List<String> getAllEnvironmentNames() {
+    List<String> getAllEnvironmentNames(ServiceModelConfig) {
         def envNames = ServiceModelConfig['environments']
                 .collect { env -> return env['name'] }
         return envNames

@@ -1,5 +1,5 @@
 segments:
-  - id: dev-zone-common-build-props
+  - id: devzone
     PROJECT_DOCKER_REGISTRY: common-build-props
     NODEJS_BASE_IMAGE: dev_zone/ubi8/nodejs-20
     NGINX_BASE_IMAGE: dev_zone/ubi8/nginx-122

@@ -1,5 +1,5 @@
 segments:
-  - id: devzone-build-props
+  - id: devzone
     PROJECT_DOCKER_REGISTRY: u200004862-registry.repos.devzone.local
     NODEJS_BASE_IMAGE: dev_zone/ubi8/nodejs-20
     NGINX_BASE_IMAGE: dev_zone/ubi8/nginx-122

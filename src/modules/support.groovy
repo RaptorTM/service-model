@@ -4,12 +4,12 @@
 //
 //import groovy.transform.Field
 //
-//def ServiceModelConfig = new ServiceModelConfig()
-//serviceModelConfig = ServiceModelConfig.getServiceModelConfig()
+//def serviceModel = new serviceModel()
+//serviceModelConfig = serviceModel.getConfig()
 //
-//def commonBuildProps = new CommonBuildPropsConfig()
-//commonBuildPropsConfig = commonBuildProps.getCommonBuildProps()
+//def commonBuildProps = new commonBuildProps()
+//commonBuildPropsConfig = commonBuildProps.getConfig()
 //
-//def projectBuildProps = new ProjectBuildPropsConfig()
-//projectBuildPropsConfig = projectBuildProps.getProjectBuildProps()
+//def projectBuildProps = new buildProps()
+//projectBuildPropsConfig = projectBuildProps.getConfig()
 //

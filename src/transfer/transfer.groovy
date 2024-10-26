@@ -1,6 +1,5 @@
 package transfer
 import info.*
-import modules.smConfig.*
 
 getFrontForTransferInfo("bff")
 
@@ -17,7 +16,7 @@ ServiceInfo getServiceForTransferByName(String name) {
 }
 
 FrontForTransferInfo getFrontForTransferInfo(String name) {
-    def service = ServiceModelConfig['services']
+    def service = modules.smConfig.serviceModel['services']
             .find { svc -> svc['name'] == name }
 
     def info = new FrontForTransferInfo(

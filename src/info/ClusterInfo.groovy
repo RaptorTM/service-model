@@ -17,10 +17,8 @@ class ClusterInfo {
         )
     }
 
-    ClusterInfo getClusterInfoByName(String name) {
+    ClusterInfo getClusterInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['clusters'].find { svc -> svc['name'] == name }
         return makeClusterInfo(svc)
     }
-
-
 }

@@ -1,7 +1,6 @@
 package info
 
 import ci.CiProps
-import modules.smConfig.*
 
 import java.nio.file.*
 

@@ -1,22 +1,50 @@
-import groovy.transform.Field
 import info.ServiceInfo
-import modules.smConfig.*
+import info.ClusterInfo
+import info.LandscapeInfo
+import info.DeployEnvironmentInfo
+import modules.*
+import modules.config.*
 
 
 
 
-def serviceModel = new ServiceModelConfig().getServiceModelConfig()
+def serviceModel = new serviceModel().getConfig()
+def commonBuildProps = new commonBuildProps().getConfig()
+def projectBuildProps = new buildProps().getConfig()
+
 def serviceInfo = new ServiceInfo()
+def clusterInfo = new ClusterInfo()
+def landscapeInfo = new LandscapeInfo()
+def deployEnvironmentInfo = new DeployEnvironmentInfo()
 def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
+def build = new build()
 println Services['dockerfile']
 
+deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
+println deployEnvironment
+cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModel)
+println cluster
+landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModel)
+println landscape
+servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModel)
+println servicesToDeploy
+servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
+println servicesToBuild
+build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps)
 
 
 
 
 
-
-
+//servicesToDeploy.findAll {it.type == serviceInfo.getServiceTypes().infrastructure}
+//
+//servicesToDeploy.findAll {it.type == serviceInfo.getServiceTypes().dbMigrations}
+//
+//servicesToDeploy.findAll {it.type in [
+//        serviceInfo.getServiceTypes().dotnet,
+//        serviceInfo.getServiceTypes().front,
+//        serviceInfo.getServiceTypes().python
+//]}
 
 
 
@@ -25,8 +53,8 @@ println Services['dockerfile']
 
 //@Field serviceModelConfigYaml
 //
-//def ServiceModelConfig = new ServiceModelConfig()
-//serviceModelConfigYaml = ServiceModelConfig.getServiceModelConfig() as ServiceModelConfig
+//def serviceModel = new serviceModel()
+//serviceModelConfigYaml = serviceModel.getConfig() as serviceModel
 //
 //
 //
@@ -41,13 +69,13 @@ println Services['dockerfile']
 
 
 
-//  def serviceModelConfig = serviceModel.getServiceModelConfig()
+//  def serviceModelConfig = serviceModel.getConfig()
 
-//  def commonBuildProps = new CommonBuildPropsConfig()
-//  def commonBuildPropsConfig = commonBuildProps.getCommonBuildProps()
+//  def commonBuildProps = new commonBuildProps()
+//  def commonBuildPropsConfig = commonBuildProps.getConfig()
 //
-//  def projectBuildProps = new ProjectBuildPropsConfig()
-//  def projectBuildPropsConfig = projectBuildProps.getProjectBuildProps()
+//  def projectBuildProps = new buildProps()
+//  def projectBuildPropsConfig = projectBuildProps.getConfig()
 
 //    println serviceModel
 //  println serviceModelConfig
@@ -68,20 +96,20 @@ println Services['dockerfile']
 
 
 // Создание экземпляров классов с передачей конфигураций
-//def serviceModelConfigInstance = modules.ServiceModelConfig.get  ServiceModelConfig.getServiceModelConfig()
-//def commonBuildPropsConfigInstance = new CommonBuildPropsConfig(CommonBuildProps)
-////def projectBuildPropsConfigInstance = new ProjectBuildPropsConfig(ProjectBuildProps)
+//def serviceModelConfigInstance = modules.serviceModel.get  serviceModel.getConfig()
+//def commonBuildPropsConfigInstance = new commonBuildProps(CommonBuildProps)
+////def projectBuildPropsConfigInstance = new buildProps(ProjectBuildProps)
 
 
 
 //try {
 //  // Получение конфигураций через методы классов
-//  def serviceModelConfig = serviceModelConfigInstance.getServiceModelConfig()
-//  def commonBuildProps = commonBuildPropsConfigInstance.getCommonBuildProps()
-////  def projectBuildProps = projectBuildPropsConfigInstance.getProjectBuildProps()
+//  def serviceModelConfig = serviceModelConfigInstance.getConfig()
+//  def commonBuildProps = commonBuildPropsConfigInstance.getConfig()
+////  def projectBuildProps = projectBuildPropsConfigInstance.getConfig()
 //
 //  // Использование конфигураций
-//  println "ServiceModelConfig: ${serviceModelConfig}"
+//  println "serviceModel: ${serviceModelConfig}"
 //  println "CommonBuildProps: ${commonBuildProps}"
 ////  println "ProjectBuildProps: ${projectBuildProps}"
 //} catch (Exception e) {
