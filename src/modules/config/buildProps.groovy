@@ -2,7 +2,7 @@ package modules.config
 
 import org.yaml.snakeyaml.Yaml
 
-class buildProps {
+class buildProps implements Serializable {
     def projectBuildProps
 
     def getConfig() {

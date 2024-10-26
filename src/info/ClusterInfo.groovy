@@ -3,7 +3,7 @@ package info
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class ClusterInfo {
+class ClusterInfo implements Serializable {
     String name
     String landscape
     String cloudApiUrl

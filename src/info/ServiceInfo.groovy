@@ -4,7 +4,7 @@ import ci.CiProps
 
 import java.nio.file.*
 
-class ServiceInfo {
+class ServiceInfo implements Serializable {
     String buildJob
     String dockerfile
     String image

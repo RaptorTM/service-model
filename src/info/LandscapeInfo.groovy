@@ -1,6 +1,6 @@
 package info
 
-class LandscapeInfo {
+class LandscapeInfo implements Serializable {
     String name
     String paasId
     String segmentId
