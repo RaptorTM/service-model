@@ -1,16 +1,23 @@
-
-
 pipeline {
     agent any
 
     stages {
         stage('Run main.groovy') {
             steps {
-                // Запускаем файл main.groovy
                 script {
-                    def groovyScript = load 'src\\Main.groovy'
-                    groovyScript.run_test_script()
+                    // Загружаем все необходимые файлы
+                    load 'src/info/ServiceInfo.groovy'
+                    load 'src/info/ClusterInfo.groovy'
+                    load 'src/info/LandscapeInfo.groovy'
+                    load 'src/info/DeployEnvironmentInfo.groovy'
+                    load 'src/modules/config/serviceModel.groovy'
+                    load 'src/modules/config/commonBuildProps.groovy'
+                    load 'src/modules/config/buildProps.groovy'
+                    load 'src/modules/build.groovy'
 
+                    // Запускаем файл main.groovy
+                    def groovyScript = load 'src/Main.groovy'
+                    groovyScript.run_test_script()
                 }
             }
         }

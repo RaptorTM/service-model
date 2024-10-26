@@ -28,12 +28,12 @@ class DeployEnvironmentInfo {
         )
     }
 
-    DeployEnvironmentInfo getDeployEnvironmentInfoByName(String name, ServiceModelConfig) {
+    static DeployEnvironmentInfo getDeployEnvironmentInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['environments'].find { svc -> svc['name'] == name }
         return makeDeployEnvironmentInfo(svc)
     }
 
-    List<String> getAllEnvironmentNames(ServiceModelConfig) {
+    static List<String> getAllEnvironmentNames(ServiceModelConfig) {
         def envNames = ServiceModelConfig['environments']
                 .collect { env -> return env['name'] }
         return envNames as List<String>

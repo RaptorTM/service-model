@@ -10,7 +10,7 @@ class ClusterInfo {
     String paasId
     String platform
 
-    ClusterInfo makeClusterInfo(svc) {
+    static ClusterInfo makeClusterInfo(svc) {
         return new ClusterInfo(
                 name: svc['name'],
                 landscape: svc['landscape'],
@@ -20,7 +20,7 @@ class ClusterInfo {
         )
     }
 
-    ClusterInfo getClusterInfoByName(String name, ServiceModelConfig) {
+    static ClusterInfo getClusterInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['clusters'].find { svc -> svc['name'] == name }
         return makeClusterInfo(svc)
     }

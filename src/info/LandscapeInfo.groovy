@@ -3,13 +3,13 @@ package info
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class LandscapeInfo {
+public class LandscapeInfo {
     String name
     String paasId
     String segmentId
     String mainRegistry
 
-    LandscapeInfo makeLandscapeInfo(svc) {
+    static public LandscapeInfo makeLandscapeInfo(svc) {
         return new LandscapeInfo(
                 name: svc['name'],
                 paasId: svc['paasId'],
@@ -18,12 +18,12 @@ class LandscapeInfo {
         )
     }
 
-    LandscapeInfo getLandscapeInfoByName(String name, ServiceModelConfig) {
+    static LandscapeInfo getLandscapeInfoByName(String name, ServiceModelConfig) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['name'] == name }
         return makeLandscapeInfo(svc)
     }
 
-    LandscapeInfo getLandscapeInfoBySegment(String segmentId, ServiceModelConfig) {
+    static LandscapeInfo getLandscapeInfoBySegment(String segmentId, ServiceModelConfig) {
         def svc = ServiceModelConfig['landscapes'].find { svc -> svc['segmentId'] == segmentId }
         return makeLandscapeInfo(svc)
     }

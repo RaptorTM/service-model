@@ -3,7 +3,9 @@ import info.ClusterInfo
 import info.LandscapeInfo
 import info.DeployEnvironmentInfo
 import modules.*
-import modules.config.*
+import modules.config.buildProps
+import modules.config.commonBuildProps
+import modules.config.serviceModel
 
 def run_test_script(){
     def serviceModel = new serviceModel().getConfig()
