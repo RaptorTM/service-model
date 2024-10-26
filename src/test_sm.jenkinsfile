@@ -22,10 +22,10 @@ pipeline {
 //                     def groovyClass = loader.parseClass(readFile 'src\\modules\\config\\serviceModel.groovy').newInstance()
 
 
-                    def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
+                    def serviceModelClass = load "src\\modules\\config\\serviceModel.groovy"
 
 //                     def Services = groovyClass.getConfig()
-                    println groovyClass.getConfig()['dockerfile']
+                    println serviceModelClass.getConfig()['dockerfile']
                     println "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
 
             }
