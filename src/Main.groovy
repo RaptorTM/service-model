@@ -5,32 +5,33 @@ import info.DeployEnvironmentInfo
 import modules.*
 import modules.config.*
 
+def run_test_script(){
+    def serviceModel = new serviceModel().getConfig()
+    def commonBuildProps = new commonBuildProps().getConfig()
+    def projectBuildProps = new buildProps().getConfig()
 
+    def serviceInfo = new ServiceInfo()
+    def clusterInfo = new ClusterInfo()
+    def landscapeInfo = new LandscapeInfo()
+    def deployEnvironmentInfo = new DeployEnvironmentInfo()
+    def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
+    def build = new build()
+    println Services['dockerfile']
 
+    def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
+    println deployEnvironment
+    def cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModel)
+    println cluster
+    def landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModel)
+    println landscape
+    def servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModel)
+    println servicesToDeploy
+    def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
+    println servicesToBuild
+    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
+}
 
-def serviceModel = new serviceModel().getConfig()
-def commonBuildProps = new commonBuildProps().getConfig()
-def projectBuildProps = new buildProps().getConfig()
-
-def serviceInfo = new ServiceInfo()
-def clusterInfo = new ClusterInfo()
-def landscapeInfo = new LandscapeInfo()
-def deployEnvironmentInfo = new DeployEnvironmentInfo()
-def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
-def build = new build()
-println Services['dockerfile']
-
-deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
-println deployEnvironment
-cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModel)
-println cluster
-landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModel)
-println landscape
-servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModel)
-println servicesToDeploy
-servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
-println servicesToBuild
-build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
+run_test_script()
 
 
 
