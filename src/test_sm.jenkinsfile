@@ -16,8 +16,8 @@ pipeline {
                     def loader = new GroovyClassLoader(parent)
 
 //                     def someParameterValue = "abc"
-
-                    def groovyClass = loader.parseClass(new File(jenkinsRootDir + "src\\modules\\config\\serviceModel.groovy")).newInstance()
+                    println jenkinsRootDir
+                    def groovyClass = loader.parseClass(readFile (jenkinsRootDir + "src\\modules\\config\\serviceModel.groovy")).newInstance()
 
                     def Services = groovyClass.getConfig()
                     println Services['dockerfile']
