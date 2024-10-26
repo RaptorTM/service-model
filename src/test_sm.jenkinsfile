@@ -3,32 +3,32 @@ pipeline {
 
     stages {
         stage('Load Classes') {
-                    steps {
-                        script {
-                            def packageName = 'modules.config' // Имя вашего пакета
-                            def classes = []
+            steps {
+                script {
+                    def packageName = 'modules.config' // Имя вашего пакета
+                    def classes = []
 
-                            def rootDir = new File('src\\modules\\config')
+                    def rootDir = new File('src\\modules\\config')
 
-                            if (!rootDir.exists()) {
-                                throw new Exception("Directory 'src\\modules\\config' does not exist")
-                            }
+                    if (!rootDir.exists()) {
+                        throw new Exception("Directory 'src\\modules\\config' does not exist")
+                    }
 
-                            rootDir.eachFileRecurse(FilenameFilter.ACCEPT) { file ->
-                                if (file.name.endsWith('.groovy')) {
-                                    def relativePath = file.path.substring(rootDir.path.size() + 1).replace(File.separatorChar, '.')[:-7]
-                                    if (relativePath.startsWith(packageName)) {
-                                        classes << load("${packageName}.${relativePath}")
-                                    }
-                                }
-                            }
-
-                            classes.each { clazz ->
-                                println "Loaded class: ${clazz.name}"
+                    rootDir.eachFileRecurse(FilenameFilter.ACCEPT) { file ->
+                        if (file.name.endsWith('.groovy')) {
+                            def relativePath = file.path.substring(rootDir.path.size() + 1).replace(File.separatorChar, '.').substring(0, -7)
+                            if (relativePath.startsWith(packageName)) {
+                                classes << load("${packageName}.${relativePath}")
                             }
                         }
                     }
+
+                    classes.each { clazz ->
+                        println "Loaded class: ${clazz.name}"
+                    }
                 }
+            }
+        }
         stage('Run main.groovy') {
             steps {
                 // Запускаем файл main.groovy
