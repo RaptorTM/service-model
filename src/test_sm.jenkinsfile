@@ -16,8 +16,10 @@ pipeline {
                     load 'src/modules/config/buildProps.groovy'
                     load 'src/modules/build.groovy'
 
-                    println "!!!!!!!!!!!!!!!!!!Current Folder!!!!!!!!!!!!!!!!!!!!!!!!"
-                    ls
+                    echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
+                    println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
+//                     def output = bat returnStdout: true, script: "dir \"${JENKINS_HOME}\" /b /A:D"
+                    dir
 //                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
 //                     def a = serviceModel.getConfig()
 //                     println a
