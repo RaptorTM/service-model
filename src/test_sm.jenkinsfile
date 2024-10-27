@@ -16,8 +16,8 @@ pipeline {
 //                     load 'src/modules/config/buildProps.groovy'
 //                     load 'src/modules/build.groovy'
 
-                    def classloader = load 'src/class_loader.groovy'
-                    classloader.load_classes()
+                    def support = load 'src/modules/support.groovy'
+                    support.load_sm_classes()
 
                     echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
                     println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
