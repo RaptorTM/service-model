@@ -1,7 +1,5 @@
 package ci
 
-import info.ServiceInfo
-
 class allure {
     def findAllureResults(String path) {
         echo "============ LOOKING FOR allure-results FOLDER INSIDE ${path} ... ==========="
@@ -11,7 +9,7 @@ class allure {
         ).trim()
     }
 
-    def copyAllureResults(ServiceInfo svc) {
+    def copyAllureResults(svc) {
         def actionName = "COPY ALLURE RESULTS"
         def title = "============ ${actionName} - ${svc.name} ==========="
         def command
@@ -31,7 +29,7 @@ class allure {
         }
     }
 
-    def cleanAllureResults(ServiceInfo svc) {
+    def cleanAllureResults(svc) {
         def actionName = "CLEAN ALLURE RESULTS"
         def title = "============ ${actionName} - ${svc.name} ==========="
         def command

@@ -32,7 +32,7 @@ def load_sm_classes() {
     } catch (FileNotFoundException e) {
         throw new Exception("!!!!!!!!!!!!!!!!! File not found: ${e.message} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     } catch (Exception e) {
-        throw new Exception(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; An error occurred while loading files: ${e.message} ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+        throw new Exception(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; An error occurred while loading files: \n ${e.message} \\n ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
     }
 }
 
