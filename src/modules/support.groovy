@@ -10,7 +10,7 @@ static boolean pathExist(servicePath) {
 }
 
 def load_sm_classes() {
-    // Загружаем все необходимые файлы
+    // Загружаем все классы проекта
     try {
         load 'src/ci/Props.groovy'
         load 'src/ci/allure.groovy'
@@ -29,10 +29,8 @@ def load_sm_classes() {
         load 'src/modules/python.groovy'
         load 'src/modules/shellResult.groovy'
         println("SUCCESS - All service-model classes are loaded")
-    } catch (FileNotFoundException e) {
-        throw new Exception("!!!!!!!!!!!!!!!!! File not found: ${e.message} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     } catch (Exception e) {
-        throw new Exception(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; An error occurred while loading files: \n ${e.message} \\n ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+        throw new Exception("!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла ошибка: \n ${e.message} \n -----------------!!!!!!!!!!!!!!!!!")
     }
 }
 
