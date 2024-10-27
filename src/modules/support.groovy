@@ -27,6 +27,7 @@ def load_sm_classes() {
     load 'src/modules/migrations.groovy'
     load 'src/modules/python.groovy'
     load 'src/modules/shellResult.groovy'
+    println("SUCCESS - All service-model classes is load")
 }
 
 return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
