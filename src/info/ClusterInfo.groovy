@@ -1,9 +1,6 @@
 package info
 
-import groovy.transform.CompileStatic
-
-@CompileStatic
-class ClusterInfo implements Serializable {
+class ClusterInfo {
     String name
     String landscape
     String cloudApiUrl
@@ -24,4 +21,7 @@ class ClusterInfo implements Serializable {
         def svc = ServiceModelConfig['clusters'].find { svc -> svc['name'] == name }
         return makeClusterInfo(svc)
     }
+
 }
+
+return this

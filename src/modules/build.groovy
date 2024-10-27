@@ -1,6 +1,6 @@
 package modules
 
-class build implements Serializable {
+class build {
     static Map<String,String> getBuildProps(String segmentId, CommonBuildProps, ProjectBuildProps) {
         def commonProps = CommonBuildProps['segments'].find { svc -> svc['id'] == segmentId}
         def projectProps = ProjectBuildProps['segments'].find { svc -> svc['id'] == segmentId}
@@ -13,3 +13,5 @@ class build implements Serializable {
         props.each { key, value -> env."$key" = "$value" }
     }
 }
+
+return this

@@ -2,7 +2,7 @@ package modules.config
 
 import org.yaml.snakeyaml.Yaml
 
-class commonBuildProps implements Serializable {
+class commonBuildProps {
     def commonBuildProps
 
     def getConfig() {
@@ -16,3 +16,6 @@ class commonBuildProps implements Serializable {
         return this.commonBuildProps
     }
 }
+
+
+return this

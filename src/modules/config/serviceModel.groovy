@@ -2,7 +2,7 @@ package modules.config
 
 import org.yaml.snakeyaml.Yaml
 
-class serviceModel implements Serializable {
+class serviceModel {
     def serviceModelConfig
 
     def getConfig() {
@@ -17,3 +17,6 @@ class serviceModel implements Serializable {
         return this.serviceModelConfig
     }
 }
+
+
+return this

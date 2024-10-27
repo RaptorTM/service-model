@@ -1,6 +1,6 @@
 package info
 
-class DeployEnvironmentInfo implements Serializable {
+class DeployEnvironmentInfo {
     String name
     String cluster
     String projectId
@@ -36,3 +36,6 @@ class DeployEnvironmentInfo implements Serializable {
         return envNames as List<String>
     }
 }
+
+
+return this
