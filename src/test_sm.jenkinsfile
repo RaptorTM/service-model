@@ -18,8 +18,8 @@ pipeline {
 
                     echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
                     println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
-                    def output = bat returnStdout: true, script: "dir"
-                    println "output"
+                    bat(returnStdout: true, script: 'dir')
+
 //                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
 //                     def a = serviceModel.getConfig()
 //                     println a
