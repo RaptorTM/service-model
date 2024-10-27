@@ -9,7 +9,7 @@ static boolean pathExist(servicePath) {
     return Files.exists(path)
 }
 
-static def load_sm_classes() {
+def load_sm_classes() {
     // Загружаем все необходимые файлы
     load 'src/ci/Props.groovy'
     load 'src/ci/allure.groovy'
