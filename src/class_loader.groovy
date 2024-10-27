@@ -1,5 +1,5 @@
 class class_loader {
-    load_classes(){
+    def load_classes() {
         // Загружаем все необходимые файлы
         load 'src/ci/Props.groovy'
         load 'src/info/ServiceInfo.groovy'
