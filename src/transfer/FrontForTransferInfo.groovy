@@ -6,4 +6,4 @@ class FrontForTransferInfo {
     public String packageJsonPath
 }
 
-// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
+return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

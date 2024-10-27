@@ -22,4 +22,4 @@ class DotnetForTransferInfo {
         return info
     }
 }
-// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
+return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
