@@ -28,11 +28,11 @@ def load_sm_classes() {
         load 'src/modules/migrations.groovy'
         load 'src/modules/python.groovy'
         load 'src/modules/shellResult.groovy'
-        println("\u001B[32mSUCCESS - All service-model classes are loaded\u001B[0m")
+        echo "\u001B[32mSUCCESS - All service-model classes are loaded\u001B[0m"
     } catch (Exception e) {
-        throw new Exception("""\u001B[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!
+        throw new Exception("""[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!
             ${e.message}
-            !!!!!!!!!!!!!!!!!---------------------------------------------------------------------------------------------------!!!!!!!!!!!!!!!!!\u001B[0m""")
+            !!!!!!!!!!!!!!!!!---------------------------------------------------------------------------------------------------!!!!!!!!!!!!!!!!!""")
     }
 }
 
