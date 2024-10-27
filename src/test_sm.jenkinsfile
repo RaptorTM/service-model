@@ -16,6 +16,8 @@ pipeline {
                     load 'src/modules/config/buildProps.groovy'
                     load 'src/modules/build.groovy'
 
+                    println "!!!!!!!!!!!!!!!!!!Current Folder!!!!!!!!!!!!!!!!!!!!!!!!"
+                    ls
 //                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
 //                     def a = serviceModel.getConfig()
 //                     println a
