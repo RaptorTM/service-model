@@ -27,10 +27,7 @@ pipeline {
                     // Выводим содержимое текущего каталога
                     bat(returnStdout: true, script: 'dir')
 
-//                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
-//                     def a = serviceModel.getConfig()
-//                     println a
-//                     // Запускаем файл main.groovy
+                    // Запускаем файл main.groovy
                     def groovyScript = load 'src/Main.groovy'
                     groovyScript.run_test_script()
 
