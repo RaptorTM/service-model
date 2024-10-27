@@ -17,8 +17,8 @@ def load_sm_classes() {
         load 'src/info/ServiceInfo.groovy'
         load 'src/info/ClusterInfo.groovy'
         load 'src/info/LandscapeInfo.groovy'
-        load 'src/info/DeployEnvironmentInfo.groovy1'
-        load 'src/modules/config/serviceModel.groovy1'
+        load 'src/info/DeployEnvironmentInfo.groovy'
+        load 'src/modules/config/serviceModel.groovy'
         load 'src/modules/config/commonBuildProps.groovy'
         load 'src/modules/config/buildProps.groovy'
         load 'src/modules/build.groovy'
@@ -30,9 +30,9 @@ def load_sm_classes() {
         load 'src/modules/shellResult.groovy'
         println("\u001B[32mSUCCESS - All service-model classes are loaded\u001B[0m")
     } catch (Exception e) {
-        throw new Exception("""!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!
-                ${e.message}
-                !!!!!!!!!!!!!!!!!---------------------------------------------------------------------------------------------------!!!!!!!!!!!!!!!!!""")
+        throw new Exception("""\u001B[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!
+            ${e.message}
+            !!!!!!!!!!!!!!!!!---------------------------------------------------------------------------------------------------!!!!!!!!!!!!!!!!!\u001B[0m""")
     }
 }
 
