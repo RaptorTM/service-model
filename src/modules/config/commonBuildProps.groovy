@@ -8,7 +8,7 @@ class commonBuildProps {
     def getConfig() {
         if (this.commonBuildProps == null) {
             Yaml yaml = new Yaml()
-            commonBuildProps = yaml.load(('C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test-service-model\\config\\common-build-props.yaml'as File).text)
+            commonBuildProps = yaml.load(('/Users/ruslan/IdeaProjects/new/service-model/config/common-build-props.yaml'as File).text)
         }
 //        else {
 //            throw new Exception("CommonBuildProps file not found or is empty.")

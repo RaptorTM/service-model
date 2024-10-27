@@ -68,20 +68,20 @@ class ServiceInfo {
         return infos
     }
 
-    List<ServiceInfo> getServicesForBuild() {
-        return getServicesFromModel({ svc -> svc['dockerfile'] != null })
+    List<ServiceInfo> getServicesForBuild(serviceModelConfigYaml) {
+        return getServicesFromModel({ svc -> svc['dockerfile'] != null },serviceModelConfigYaml)
     }
 
-    List<ServiceInfo> getServicesWithBuildJobs() {
-        return getServicesFromModel({ svc -> svc['buildJob'] != null })
+    List<ServiceInfo> getServicesWithBuildJobs(serviceModelConfigYaml) {
+        return getServicesFromModel({ svc -> svc['buildJob'] != null },serviceModelConfigYaml)
     }
 
-    List<ServiceInfo> getServicesByTypeForScanners(String type) {
-        return getServicesFromModel({ svc -> svc['type'] == type })
+    List<ServiceInfo> getServicesByTypeForScanners(String type, serviceModelConfigYaml) {
+        return getServicesFromModel({ svc -> svc['type'] == type },serviceModelConfigYaml)
     }
 
-    List<ServiceInfo> getServicesForCi() {
-        return getServicesFromModel({ svc -> svc['Props.groovy'] != null })
+    List<ServiceInfo> getServicesForCi(serviceModelConfigYaml) {
+        return getServicesFromModel({ svc -> svc['Props.groovy'] != null },serviceModelConfigYaml)
     }
 
 
@@ -140,12 +140,6 @@ class ServiceInfo {
         }
         return commonArgs + serviceArgs
     }
-
-    static boolean pathExist(servicePath) {
-        Path path = servicePath
-        return Files.exists(path)
-    }
-
 }
 
 // return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

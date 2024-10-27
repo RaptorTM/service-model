@@ -26,10 +26,17 @@ def run_test_script(){
     println cluster
     def landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModel)
     println landscape
+
+    def servicesToBuild = serviceInfo.getServicesForBuild(serviceModel)
+    for (s in servicesToBuild) {
+        println(s['name'])
+        println(s['dockerfile'])
+    }
     def servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModel)
-    println servicesToDeploy
-    def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModel)
-    println servicesToBuild
+    for (s in servicesToDeploy) {
+        println(s['image'])
+        println(s['type'])
+    }
 //    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
 }
 

@@ -112,6 +112,4 @@ CiProps makeCiProps(svc) {
     return ciProps
 }
 
-
-
-
+// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

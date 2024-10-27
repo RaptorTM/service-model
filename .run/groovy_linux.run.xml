@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="groovy_linux" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+    <module name="service-model" />
+    <setting name="path" value="file://$PROJECT_DIR$/../../service-model/src/Main.groovy" />
+    <setting name="vmparams" value="" />
+    <setting name="params" value="" />
+    <setting name="workDir" value="file://$PROJECT_DIR$/../../service-model/" />
+    <setting name="debug" value="false" />
+    <setting name="alternativeJrePathEnabled" value="true" />
+    <setting name="alternativeJrePath" value="azul-21" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
