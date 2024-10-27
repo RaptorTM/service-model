@@ -18,6 +18,10 @@ pipeline {
 
                     echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
                     println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
+                    // Выводим текущий путь
+                    bat "echo Current Directory: %CD%"
+
+                    // Выводим содержимое текущего каталога
                     bat(returnStdout: true, script: 'dir')
 
 //                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
