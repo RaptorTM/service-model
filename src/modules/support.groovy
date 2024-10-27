@@ -11,16 +11,29 @@ static boolean pathExist(servicePath) {
 
 def load_sm_classes() {
     // Загружаем все необходимые файлы
-    load 'src/ci/Props.groovy'
-    load 'src/info/ServiceInfo.groovy'
-    load 'src/info/ClusterInfo.groovy'
-    load 'src/info/LandscapeInfo.groovy'
-    load 'src/info/DeployEnvironmentInfo.groovy'
-    load 'src/modules/config/serviceModel.groovy'
-    load 'src/modules/config/commonBuildProps.groovy'
-    load 'src/modules/config/buildProps.groovy'
-    load 'src/modules/build.groovy'
-    println("SUCCESS - All service-model classes is load")
+    try {
+        load 'src/ci/Props.groovy'
+        load 'src/ci/allure.groovy'
+        load 'src/info/ServiceInfo.groovy'
+        load 'src/info/ClusterInfo.groovy'
+        load 'src/info/LandscapeInfo.groovy'
+        load 'src/info/DeployEnvironmentInfo.groovy1'
+        load 'src/modules/config/serviceModel.groovy1'
+        load 'src/modules/config/commonBuildProps.groovy'
+        load 'src/modules/config/buildProps.groovy'
+        load 'src/modules/build.groovy'
+        load 'src/modules/dotnet.groovy'
+        load 'src/modules/frontend.groovy'
+        load 'src/modules/infrastructure.groovy'
+        load 'src/modules/migrations.groovy'
+        load 'src/modules/python.groovy'
+        load 'src/modules/shellResult.groovy'
+        println("SUCCESS - All service-model classes are loaded")
+    } catch (FileNotFoundException e) {
+        throw new Exception("!!!!!!!!!!!!!!!!! File not found: ${e.message} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    } catch (Exception e) {
+        throw new Exception(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; An error occurred while loading files: ${e.message} ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+    }
 }
 
 return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

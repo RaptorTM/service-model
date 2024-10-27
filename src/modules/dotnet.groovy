@@ -1,9 +1,7 @@
 package modules
 
-import info.ServiceInfo
-
 class dotnet {
-    def dotnetRestore(ServiceInfo svc){
+    def dotnetRestore(svc){
         def actionName = "RESTORE"
         def title = "============ dotnet ${actionName} - ${svc.name} ==========="
         def command
@@ -19,7 +17,7 @@ class dotnet {
         }
     }
 
-    def dotnetBuild(ServiceInfo svc) {
+    def dotnetBuild(svc) {
         def actionName = "BUILD"
         def title = "============ dotnet ${actionName} - ${svc.name} ==========="
         def command
@@ -35,7 +33,7 @@ class dotnet {
         }
     }
 
-    def dotnetTest(ServiceInfo svc) {
+    def dotnetTest(svc) {
         def actionName = "TEST"
         def title = "============ dotnet ${actionName} - ${svc.name} ==========="
         def command
@@ -51,7 +49,7 @@ class dotnet {
         }
     }
 
-    def dotnetCheckSwagger(ServiceInfo svc) {
+    def dotnetCheckSwagger(svc) {
         def actionName = "CHECK SWAGGEER"
         def title = "============ dotnet ${actionName} - ${svc.name} ==========="
         def command
@@ -86,7 +84,7 @@ class dotnet {
         }
     }
 
-    def dotnetClean(ServiceInfo svc) {
+    def dotnetClean(svc) {
         def actionName = "CLEAN"
         return {
             echo "============ dotnet ${actionName} - ${svc.name} ==========="

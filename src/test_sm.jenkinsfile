@@ -5,19 +5,7 @@ pipeline {
         stage('Run main.groovy') {
             steps {
                 script {
-//                     // Загружаем все необходимые файлы
-//                     load 'src/ci/Props.groovy'
-//                     load 'src/info/ServiceInfo.groovy'
-//                     load 'src/info/ClusterInfo.groovy'
-//                     load 'src/info/LandscapeInfo.groovy'
-//                     load 'src/info/DeployEnvironmentInfo.groovy'
-//                     load 'src/modules/config/serviceModel.groovy'
-//                     load 'src/modules/config/commonBuildProps.groovy'
-//                     load 'src/modules/config/buildProps.groovy'
-//                     load 'src/modules/build.groovy'
-
-//                         def load_sm_classes = load 'src/class_loader.groovy'
-//                         load_sm_classes.load_classes()
+                    // Загружаем все необходимые классы
                     def support = load 'src/modules/support.groovy'
                     support.load_sm_classes()
 

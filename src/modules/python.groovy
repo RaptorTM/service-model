@@ -1,10 +1,7 @@
 package modules
 
-import info.ServiceInfo
-
-
 class python {
-    def pythonPoetryInstall(ServiceInfo svc) {
+    def pythonPoetryInstall(svc) {
         def actionName = "POETRY INSTALL"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command = """
@@ -17,7 +14,7 @@ class python {
         }
     }
 
-    def pythonPoetryBuild(ServiceInfo svc) {
+    def pythonPoetryBuild(svc) {
         def actionName = "POETRY BUILD"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -39,7 +36,7 @@ class python {
         }
     }
 
-    def pythonPoetryPytest(ServiceInfo svc) {
+    def pythonPoetryPytest(svc) {
         def actionName = "POETRY RUN PYTEST"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -65,7 +62,7 @@ class python {
         ).trim()
     }
 
-    def pythonPoetryPylint(ServiceInfo svc) {
+    def pythonPoetryPylint(svc) {
         def actionName = "POETRY RUN PYLINT"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -85,7 +82,7 @@ class python {
         }
     }
 
-    def pythonPoetryMypy(ServiceInfo svc) {
+    def pythonPoetryMypy(svc) {
         def actionName = "POETRY RUN MYPY"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -105,7 +102,7 @@ class python {
         }
     }
 
-    def pythonPoetryBlack(ServiceInfo svc) {
+    def pythonPoetryBlack(svc) {
         def actionName = "POETRY RUN BLACK CHECK"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -125,7 +122,7 @@ class python {
         }
     }
 
-    def pythonPoetryIsort(ServiceInfo svc) {
+    def pythonPoetryIsort(svc) {
         def actionName = "POETRY RUN ISORT CHECK"
         def title = "============ python ${actionName} - ${svc.name} ==========="
         def command
@@ -145,7 +142,7 @@ class python {
         }
     }
 
-    def pythonPoetryClean(ServiceInfo svc) {
+    def pythonPoetryClean(svc) {
         def actionName = "POETRY CLEAN"
         return {
             echo "============ python ${actionName} - ${svc.name} ==========="

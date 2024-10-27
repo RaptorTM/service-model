@@ -1,9 +1,7 @@
 package modules
 
-import info.ServiceInfo
-
 class frontend {
-    def npmRootPackageCleanInstall(ServiceInfo svc) {
+    def npmRootPackageCleanInstall(svc) {
         def actionName = "CLEAN INSTALL"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -22,7 +20,7 @@ class frontend {
         }
     }
 
-    def npmRootPackageExists(ServiceInfo svc) {
+    def npmRootPackageExists(svc) {
         if (fileExists("${svc.path}/../package.json")) {
             def content = readFile(file: "${svc.path}/../package.json")
             if(content.contains("scripts")) {
@@ -34,7 +32,7 @@ class frontend {
         return false
     }
 
-    def npmCleanInstall(ServiceInfo svc) {
+    def npmCleanInstall(svc) {
         def actionName
         def command
         if(npmRootPackageExists(svc)) {
@@ -53,7 +51,7 @@ class frontend {
         }
     }
 
-    def npmBuildClients(ServiceInfo svc) {
+    def npmBuildClients(svc) {
         def actionName = "BUILD CLIENTS"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -72,7 +70,7 @@ class frontend {
         }
     }
 
-    def npmTypeCheck(ServiceInfo svc) {
+    def npmTypeCheck(svc) {
         def actionName = "TYPE CHECK"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -91,7 +89,7 @@ class frontend {
         }
     }
 
-    def npmLint(ServiceInfo svc) {
+    def npmLint(svc) {
         def actionName = "LINT"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -110,7 +108,7 @@ class frontend {
         }
     }
 
-    def npmBuildApp(ServiceInfo svc) {
+    def npmBuildApp(svc) {
         def actionName = "BUILD APP"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -129,7 +127,7 @@ class frontend {
         }
     }
 
-    def npmTest(ServiceInfo svc) {
+    def npmTest(svc) {
         def actionName = "TEST"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def command
@@ -148,7 +146,7 @@ class frontend {
         }
     }
 
-    def npmCustomCommands(ServiceInfo svc) {
+    def npmCustomCommands(svc) {
         def actionName = "CUSTOM COMMANDS"
         def title = "============ npm ${actionName} - ${svc.name} ==========="
         def commands = ""
@@ -167,7 +165,7 @@ class frontend {
         }
     }
 
-    def npmClean(ServiceInfo svc) {
+    def npmClean(svc) {
         def actionName = "CLEAN"
         return {
             echo "============ npm ${actionName} - ${svc.name} ==========="
