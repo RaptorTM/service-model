@@ -18,5 +18,4 @@ class serviceModel {
     }
 }
 
-
-return this
+// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

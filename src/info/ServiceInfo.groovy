@@ -106,46 +106,46 @@ class ServiceInfo {
         switch (serviceType) {
             case serviceTypes.dbMigrations:
                 serviceArgs = "--build-arg MIGRATE_BASE_IMAGE=${buildProps.MIGRATE_BASE_IMAGE} "
-                break;
+                break
             case serviceTypes.dotnet:
                 serviceArgs = "--build-arg DOTNET_SDK_BASE_IMAGE=${buildProps.DOTNET_SDK_BASE_IMAGE} " +
                         "--build-arg DOTNET_RUNTIME_BASE_IMAGE=${buildProps.DOTNET_RUNTIME_BASE_IMAGE} " +
                         "--build-arg NUGET_V3_EXTERNAL=${buildProps.NUGET_V3_EXTERNAL} " +
                         "--build-arg APP_VERSION=${appVersion} "
-                break;
+                break
             case serviceTypes.front:
                 serviceArgs = "--build-arg NODEJS_BASE_IMAGE=${buildProps.NODEJS_BASE_IMAGE} " +
                         "--build-arg NGINX_BASE_IMAGE=${buildProps.NGINX_BASE_IMAGE} " +
                         "--build-arg NPM_REGISTRY=${buildProps.NPM_REGISTRY} " +
                         "--build-arg APP_VERSION=${appVersion} "
-                break;
+                break
             case serviceTypes.python:
                 serviceArgs = "--build-arg POETRY_VERSION=${buildProps.POETRY_VERSION} " +
                         "--build-arg PYTHON_BASE_IMAGE=${buildProps.PYTHON_BASE_IMAGE} " +
                         "--build-arg PIP_INDEX_URL=${buildProps.PIP_INDEX_URL} " +
                         "--build-arg PIP_TRUSTED_HOST=${buildProps.PIP_TRUSTED_HOST} " +
                         "--build-arg APP_VERSION=${appVersion} "
-                break;
+                break
             case serviceTypes.java:
                 serviceArgs = "--build-arg OPENJDK_BASE_IMAGE=${buildProps.OPENJDK_BASE_IMAGE} " +
                         "--build-arg GRADLE_BASE_IMAGE=${buildProps.GRADLE_BASE_IMAGE} " +
                         "--build-arg APP_VERSION=${appVersion} "
-                break;
+                break
             case serviceTypes.clang:
                 serviceArgs = "--build-arg APP_VERSION=${appVersion} "
-                break;
+                break
             default:
                 serviceArgs = ""
-                break;
+                break
         }
         return commonArgs + serviceArgs
     }
 
     static boolean pathExist(servicePath) {
-        Path path = servicePath;
+        Path path = servicePath
         return Files.exists(path)
     }
 
 }
 
-return this
+// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!

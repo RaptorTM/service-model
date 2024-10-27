@@ -98,7 +98,7 @@ List<String> getImagesForClair() {
             }
             .collect { svc -> svc['image'] }
             .sort()
-    return images
+    return images as List<String>
 }
 
 class DotnetForTransferInfo {
@@ -108,7 +108,7 @@ class DotnetForTransferInfo {
     String image // geomate-bff
 }
 
-DotnetForTransferInfo getDotnetForTransferInfo(String name) {
+static DotnetForTransferInfo getDotnetForTransferInfo(String name) {
     def service = ServiceModelConfig['services']
             .find { svc -> svc['name'] == name }
 
@@ -1023,4 +1023,4 @@ def cleanAllureResults(ServiceInfo svc) {
     }
 }
 
-return this
+// return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
