@@ -1,11 +1,11 @@
-import src.info.ServiceInfo
-import src.info.ClusterInfo
-import src.info.LandscapeInfo
-import src.info.DeployEnvironmentInfo
-import src.modules.*
-import src.modules.config.buildProps
-import src.modules.config.commonBuildProps
-import src.modules.config.serviceModel
+import info.ServiceInfo
+import info.ClusterInfo
+import info.LandscapeInfo
+import info.DeployEnvironmentInfo
+import modules.*
+import modules.config.buildProps
+import modules.config.commonBuildProps
+import modules.config.serviceModel
 
 class init {
     void get(){
