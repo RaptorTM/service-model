@@ -38,7 +38,7 @@ def run_test_script(){
 //        println(s['type'])
     }
 //    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
-}
+//}
 
 //run_test_script()
 
