@@ -1,4 +1,4 @@
-package modules.config
+package src.modules.config
 
 import org.yaml.snakeyaml.Yaml
 

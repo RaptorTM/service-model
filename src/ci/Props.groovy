@@ -1,4 +1,4 @@
-package ci
+package src.ci
 class CiProps {
     Boolean runTests
     String testArgs
