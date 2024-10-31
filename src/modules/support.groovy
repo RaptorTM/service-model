@@ -11,22 +11,22 @@ static boolean pathExist(servicePath) {
 def load_sm_classes() {
     // Загружаем все классы проекта
     try {
-        load 'src/ci/Props.groovy'
-        load 'src/ci/allure.groovy'
-        load 'src/info/ServiceInfo.groovy'
-        load 'src/info/ClusterInfo.groovy'
-        load 'src/info/LandscapeInfo.groovy'
-        load 'src/info/DeployEnvironmentInfo.groovy'
-        load 'src/modules/config/serviceModel.groovy'
-        load 'src/modules/config/commonBuildProps.groovy'
-        load 'src/modules/config/buildProps.groovy'
-        load 'src/modules/build.groovy'
-        load 'src/modules/dotnet.groovy'
-        load 'src/modules/frontend.groovy'
-        load 'src/modules/infrastructure.groovy'
-        load 'src/modules/migrations.groovy'
-        load 'src/modules/python.groovy'
-        load 'src/modules/shellResult.groovy'
+        Script ServiceInfo = load 'src/ci/Props.groovy'
+        Script allure                 = load 'src/ci/allure.groovy'
+        Script ServiceInfo                = load 'src/info/ServiceInfo.groovy'
+        Script ClusterInfo                = load 'src/info/ClusterInfo.groovy'
+        Script LandscapeInfo                = load 'src/info/LandscapeInfo.groovy'
+        Script DeployEnvironmentInfo                = load 'src/info/DeployEnvironmentInfo.groovy'
+        Script serviceModel                = load 'src/modules/config/serviceModel.groovy'
+        Script commonBuildProps                = load 'src/modules/config/commonBuildProps.groovy'
+        Script buildProps                = load 'src/modules/config/buildProps.groovy'
+        Script build               = load 'src/modules/build.groovy'
+        Script dotnet                 = load 'src/modules/dotnet.groovy'
+        Script frontend                 = load 'src/modules/frontend.groovy'
+        Script infrastructure                 = load 'src/modules/infrastructure.groovy'
+        Script  migrations                = load 'src/modules/migrations.groovy'
+        Script python                 = load 'src/modules/python.groovy'
+        Script shellResult                 = load 'src/modules/shellResult.groovy'
         echo "SUCCESS - All service-model classes are loaded"
     } catch (Exception e) {
         throw new Exception("""[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!
