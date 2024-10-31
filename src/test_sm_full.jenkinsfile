@@ -15,7 +15,7 @@ pipeline {
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM)
                     println Services['dockerfile']
 
-//                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModelM)
+//                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("devzone", serviceModelM)
 //                     println deployEnvironment
 //                     def cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModelM)
 //                     println cluster
