@@ -16,6 +16,7 @@ def run_test_script(){
     def clusterInfo = new ClusterInfo()
     def landscapeInfo = new LandscapeInfo()
     def deployEnvironmentInfo = new DeployEnvironmentInfo()
+
 //    def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
 //    def build = new build()
 //    println Services['dockerfile']
