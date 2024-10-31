@@ -17,10 +17,16 @@ pipeline {
                     // Выводим содержимое текущего каталога
                     bat(returnStdout: true, script: 'dir')
 
-                    // Запускаем файл main.groovy
-                    def groovyScript = load 'src/Main.groovy'
-                    groovyScript.run_test_script()
+//                     // Запускаем файл main.groovy
+//                     def groovyScript = load 'src/Main.groovy'
+//                     groovyScript.run_test_script()
 
+
+
+                    def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
+
+                    def Services = groovyClass.getConfig()
+                    println Services['dockerfile']
 //                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
 // //                      def build = new build()
 //                     println Services['dockerfile']
