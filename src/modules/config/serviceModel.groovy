@@ -3,10 +3,10 @@ package modules.config
 import org.yaml.snakeyaml.Yaml
 
 class serviceModel {
-    static def serviceModelConfig
+    def serviceModelConfig
 
-    static def getConfig() {
-        if (serviceModelConfig != null) {
+     def getConfig() {
+        if (this.serviceModelConfig != null) {
             return serviceModelConfig
         }
         else {
@@ -14,7 +14,7 @@ class serviceModel {
             serviceModelConfig = yaml.load(('C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test-service-model\\config\\services-model.yaml' as File).text)
 //            throw new Exception("serviceModel file not found or is empty.")
         }
-        return serviceModelConfig
+        return this.serviceModelConfig
     }
 }
 
