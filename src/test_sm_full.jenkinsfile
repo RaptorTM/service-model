@@ -24,8 +24,8 @@ pipeline {
 //                     def a = serviceModel.getConfig()
 //                     println a
 //                     // Запускаем файл main.groovy
-                    def groovyScript = load 'src/Main.groovy'
-                    groovyScript.run_test_script()
+//                     def groovyScript = load 'src/Main.groovy'
+//                     groovyScript.run_test_script()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
 //                      def build = new build()
