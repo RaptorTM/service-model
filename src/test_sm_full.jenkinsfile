@@ -10,30 +10,15 @@ pipeline {
 
                     echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
                     println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
-                    // Выводим текущий путь
                     bat "echo Current Directory: %CD%"
-
-                    // Выводим содержимое текущего каталога
                     bat(returnStdout: true, script: 'dir')
 
-                    load 'src/init.groovy'
-//                     def serviceInfo = load 'src/info/ServiceInfo.groovy'
-                    def serviceModel = load 'src/modules/config/serviceModel.groovy'
-                    def serviceModelM = serviceModel.serviceModel.getConfig()
+//                     load 'src/init.groovy'
+                    def serviceModelScript = load 'src/modules/config/serviceModel.groovy'
+                    def serviceModelM = serviceModelScript.serviceModel.getConfig()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM)
                     println Services['dockerfile']
-
-//                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("devzone", serviceModelM)
-//                     println deployEnvironment
-//                     def cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModelM)
-//                     println cluster
-//                     def landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModelM)
-//                     println landscape
-//                     def servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModelM)
-//                     println servicesToDeploy
-//                     def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModelM)
-//                     println servicesToBuild
                 }
             }
         }
