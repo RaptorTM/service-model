@@ -13,7 +13,7 @@ def load_sm_classes() {
     try {
         Script ServiceInfo = load 'src/ci/Props.groovy'
         Script allure                 = load 'src/ci/allure.groovy'
-        Script ServiceInfo                = load 'src/info/ServiceInfo.groovy'
+        Script serviceInfo = load 'src/info/ServiceInfo.groovy'
         Script ClusterInfo                = load 'src/info/ClusterInfo.groovy'
         Script LandscapeInfo                = load 'src/info/LandscapeInfo.groovy'
         Script DeployEnvironmentInfo                = load 'src/info/DeployEnvironmentInfo.groovy'

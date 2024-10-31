@@ -6,24 +6,8 @@ pipeline {
             steps {
                 script {
                     // Загружаем все необходимые классы
-                    load 'src/ci/Props.groovy'
-                    load 'src/ci/allure.groovy'
-                    load 'src/info/ServiceInfo.groovy'
-                    load 'src/info/ClusterInfo.groovy'
-                    load 'src/info/LandscapeInfo.groovy'
-                    load 'src/info/DeployEnvironmentInfo.groovy'
-                    load 'src/modules/config/serviceModel.groovy'
-                    load 'src/modules/config/commonBuildProps.groovy'
-                    load 'src/modules/config/buildProps.groovy'
-                    load 'src/modules/build.groovy'
-                    load 'src/modules/dotnet.groovy'
-                    load 'src/modules/frontend.groovy'
-                    load 'src/modules/infrastructure.groovy'
-                    load 'src/modules/migrations.groovy'
-                    load 'src/modules/python.groovy'
-                    load 'src/modules/shellResult.groovy'
-//                     def support = load 'src/modules/support.groovy'
-//                     support.load_sm_classes()
+                    def support = load 'src/modules/support.groovy'
+                    support.load_sm_classes()
 
                     echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
                     println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
@@ -37,10 +21,9 @@ pipeline {
                     def groovyScript = load 'src/Main.groovy'
                     groovyScript.run_test_script()
 
-                    def serviceInfo = new ServiceInfo()
-                    def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
+//                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
 // //                      def build = new build()
-                    println Services['dockerfile']
+//                     println Services['dockerfile']
 
 //                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
 //                     println deployEnvironment
