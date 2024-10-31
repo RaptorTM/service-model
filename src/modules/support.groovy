@@ -12,22 +12,22 @@ static boolean pathExist(servicePath) {
 def load_sm_classes() {
     // Загружаем все классы проекта
     try {
-        load 'src/ci/Props.groovy'
-        load 'src/ci/allure.groovy'
-        load 'src/info/ServiceInfo.groovy'
-        load 'src/info/ClusterInfo.groovy'
-        load 'src/info/LandscapeInfo.groovy'
-        load 'src/info/DeployEnvironmentInfo.groovy'
-        load 'src/modules/config/serviceModel.groovy'
-        load 'src/modules/config/commonBuildProps.groovy'
-        load 'src/modules/config/buildProps.groovy'
-        load 'src/modules/build.groovy'
-        load 'src/modules/dotnet.groovy'
-        load 'src/modules/frontend.groovy'
-        load 'src/modules/infrastructure.groovy'
-        load 'src/modules/migrations.groovy'
-        load 'src/modules/python.groovy'
-        load 'src/modules/shellResult.groovy'
+        def Props = load 'src/ci/Props.groovy'
+        def allure = load 'src/ci/allure.groovy'
+        def ServiceInfo = load 'src/info/ServiceInfo.groovy'
+        def ClusterInfo = load 'src/info/ClusterInfo.groovy'
+        def LandscapeInfo = load 'src/info/LandscapeInfo.groovy'
+        def DeployEnvironmentInfo = load 'src/info/DeployEnvironmentInfo.groovy'
+        def serviceModel = load 'src/modules/config/serviceModel.groovy'
+        def commonBuildProps = load 'src/modules/config/commonBuildProps.groovy'
+        def buildProps = load 'src/modules/config/buildProps.groovy'
+        def build = load 'src/modules/build.groovy'
+        def dotnet = load 'src/modules/dotnet.groovy'
+        def frontend = load 'src/modules/frontend.groovy'
+        def infrastructure = load 'src/modules/infrastructure.groovy'
+        def migrations = load 'src/modules/migrations.groovy'
+        def python = load 'src/modules/python.groovy'
+        def shellResult = load 'src/modules/shellResult.groovy'
         echo "SUCCESS - All service-model classes are loaded"
     } catch (Exception e) {
         throw new Exception("""[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!

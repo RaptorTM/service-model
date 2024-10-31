@@ -27,9 +27,9 @@ pipeline {
 //                     groovyScript.run_test_script()
 //
 //
-                    def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
+//                     def groovyClass = load "src\\modules\\config\\serviceModel.groovy"
 
-                    def Services = groovyClass.getConfig()
+                    def Services = serviceModel.getConfig()
                     println Services['dockerfile']
 //
 //                         def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
