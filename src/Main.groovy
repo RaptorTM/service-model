@@ -40,6 +40,6 @@ def run_test_script(){
 //    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
 }
 
-//run_test_script()
+run_test_script()
 
 return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
