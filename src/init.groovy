@@ -1,4 +1,4 @@
-import info.*
+//import info.*
 import info.ServiceInfo
 import info.ClusterInfo
 import info.LandscapeInfo
@@ -7,9 +7,10 @@ import modules.*
 import modules.config.*
 import modules.config.buildProps
 import modules.config.commonBuildProps
-import modules.config.serviceModel
+//import modules.config.serviceModel
 
 class init {
+    def ClusterInfo = new ClusterInfo().getLandscape()
     void get(){
         print("____________________ import clasess ____________________________")
     }

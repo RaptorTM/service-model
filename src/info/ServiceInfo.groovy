@@ -1,6 +1,6 @@
-package src.info
+package info
 
-import src.ci.CiProps
+import ci.CiProps
 
 import java.nio.file.*
 
