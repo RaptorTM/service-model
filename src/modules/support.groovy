@@ -11,13 +11,13 @@ static boolean pathExist(servicePath) {
 def load_sm_classes() {
     // Загружаем все классы проекта
     try {
-        Script ServiceInfo = load 'src/ci/Props.groovy'
+        Script Props = load 'src/ci/Props.groovy'
         Script allure                 = load 'src/ci/allure.groovy'
         Script serviceInfo = load 'src/info/ServiceInfo.groovy'
         Script ClusterInfo                = load 'src/info/ClusterInfo.groovy'
         Script LandscapeInfo                = load 'src/info/LandscapeInfo.groovy'
         Script DeployEnvironmentInfo                = load 'src/info/DeployEnvironmentInfo.groovy'
-        Script serviceModel                = load 'src/modules/config/serviceModel.groovy'
+//        Script serviceModel                = load 'src/modules/config/serviceModel.groovy'
         Script commonBuildProps                = load 'src/modules/config/commonBuildProps.groovy'
         Script buildProps                = load 'src/modules/config/buildProps.groovy'
         Script build               = load 'src/modules/build.groovy'
