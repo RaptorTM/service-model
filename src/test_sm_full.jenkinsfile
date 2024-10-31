@@ -11,42 +11,23 @@ pipeline {
             steps {
                 script {
                     load 'src/ci/Props.groovy'
-//                     def serviceModel = load 'src/config/serviceModel.groovy'
-//                     def commonBuildProps = load 'src/config/commonBuildProps.groovy'
-//                     def buildProps = load 'src/config/buildProps.groovy'
-
                     def serviceInfo = load 'src/info/ServiceInfo.groovy'
-                    def clusterInfo = load 'src/info/ClusterInfo.groovy'
-                    def landscapeInfo = load 'src/info/LandscapeInfo.groovy'
-                    def deployEnvironmentInfo = load 'src/info/DeployEnvironmentInfo.groovy'
                     def serviceModel = load 'src/modules/config/serviceModel.groovy'
-                    def commonBuildProps = load 'src/modules/config/commonBuildProps.groovy'
-                    def projectBuildProps = load 'src/modules/config/buildProps.groovy'
-
                     def serviceModelM = new serviceModel().getConfig()
-//                     def commonBuildProps = new commonBuildProps().getConfig()
-//                     def projectBuildProps = new buildProps().getConfig()
-//                     def utils = library('serviceModel').modules.config.serviceModel.new(this)
-//                     def a = serviceModel.getConfig()
-//                     println a
-//                     // Запускаем файл main.groovy
-//                     def groovyScript = load 'src/Main.groovy'
-//                     groovyScript.run_test_script()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM)
-//                      def build = new build()
                     println Services['dockerfile']
 
-                    def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModelM)
-                    println deployEnvironment
-                    def cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModelM)
-                    println cluster
-                    def landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModelM)
-                    println landscape
-                    def servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModelM)
-                    println servicesToDeploy
-                    def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModelM)
-                    println servicesToBuild
+//                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModelM)
+//                     println deployEnvironment
+//                     def cluster = clusterInfo.getClusterInfoByName(deployEnvironment.cluster, serviceModelM)
+//                     println cluster
+//                     def landscape = landscapeInfo.getLandscapeInfoByName(cluster.landscape, serviceModelM)
+//                     println landscape
+//                     def servicesToDeploy = serviceInfo.getAllServicesFromModel(serviceModelM)
+//                     println servicesToDeploy
+//                     def servicesToBuild = serviceInfo.getAllServicesFromModel(serviceModelM)
+//                     println servicesToBuild
                 }
             }
         }
