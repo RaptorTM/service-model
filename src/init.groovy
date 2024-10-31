@@ -10,7 +10,8 @@ import modules.config.commonBuildProps
 //import modules.config.serviceModel
 
 class init {
-    def ClusterInfo = new ClusterInfo().getClusterInfoByName("")
+    def ClusterInfo = new ClusterInfo()
+    def a = ClusterInfo.getClusterInfoByName("ddd")
     void get(){
         print("____________________ import clasess ____________________________")
     }
