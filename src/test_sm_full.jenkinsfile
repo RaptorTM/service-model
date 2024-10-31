@@ -18,7 +18,7 @@ pipeline {
 
                     load 'src/init.groovy'
 //                     def serviceInfo = load 'src/info/ServiceInfo.groovy'
-//                     def serviceModel = load 'src/modules/config/serviceModel.groovy'
+                    def serviceModel = load 'src/modules/config/serviceModel.groovy'
                     def serviceModelM = serviceModel().getConfig()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM)
