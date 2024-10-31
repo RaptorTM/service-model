@@ -2,7 +2,7 @@ package modules.config
 
 import org.yaml.snakeyaml.Yaml
 
-class serviceModel {
+
     def serviceModelConfig
 
      def getConfig() {
@@ -16,6 +16,6 @@ class serviceModel {
         }
         return this.serviceModelConfig
     }
-}
+
 
 return this //!!!!!!!!!_____Закоментировать на время отладки в IDE_____!!!!!!!!!
