@@ -7,6 +7,15 @@ pipeline {
                 script {
                     def support = load 'src/modules/support.groovy'
                     support.load_sm_classes()
+
+                    echo "!!!!!!!!!!!!!!!!!! JENKINS_HOME: ${JENKINS_HOME}"
+                    println "!!!!!!!!!!!!!!!!!! Current Folder !!!!!!!!!!!!!!!!!!!!!!!!"
+                    // Выводим текущий путь
+                    bat "echo Current Directory: %CD%"
+
+                    // Выводим содержимое текущего каталога
+                    bat(returnStdout: true, script: 'dir')
+
                     load 'src/init.groovy'
                     def serviceInfo = load 'src/info/ServiceInfo.groovy'
                     def serviceModel = load 'src/modules/config/serviceModel.groovy'
