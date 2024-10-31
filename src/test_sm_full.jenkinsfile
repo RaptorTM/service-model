@@ -16,7 +16,7 @@ pipeline {
 //                     load 'src/init.groovy'
                     def serviceModelScript = load 'src/modules/config/serviceModel.groovy'
                     def serviceModelM = new serviceModelScript
-                    serviceModelM.getConfig()
+                    serviceModelM().getConfig()
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM)
                     println Services['dockerfile']
