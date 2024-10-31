@@ -23,7 +23,7 @@ pipeline {
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModel)
 // //                      def build = new build()
-//                     println Services['dockerfile']
+                    println Services['dockerfile']
 
 //                     def deployEnvironment = deployEnvironmentInfo.getDeployEnvironmentInfoByName("dev", serviceModel)
 //                     println deployEnvironment
