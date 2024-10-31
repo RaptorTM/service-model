@@ -28,10 +28,10 @@ pipeline {
                     bat(returnStdout: true, script: 'dir')
 //
 //                     // Запускаем файл main.groovy
-//                     def groovyScript = load 'src/Main.groovy'
-//                     groovyScript.run_test_script()
+                    def groovyScript = load 'src/Main.groovy'
+                    groovyScript.run_test_script()
 
-                    def run_test_script(){
+
                         def serviceModel = new serviceModel().getConfig()
                         def commonBuildProps = new commonBuildProps().getConfig()
                         def projectBuildProps = new buildProps().getConfig()
@@ -64,7 +64,6 @@ pipeline {
                     //    build.setBuildPropsAsEnvVars("devzone",  commonBuildProps, projectBuildProps) //Работает только в linux
                     }
 
-                    run_test_script()
                 }
             }
         }
