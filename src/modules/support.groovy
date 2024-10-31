@@ -2,7 +2,14 @@ package modules
 
 import java.nio.file.Files
 import java.nio.file.Path
-
+import info.ServiceInfo
+import info.ClusterInfo
+import info.LandscapeInfo
+import info.DeployEnvironmentInfo
+import modules.*
+import modules.config.buildProps
+import modules.config.commonBuildProps
+import modules.config.serviceModel
 
 static boolean pathExist(servicePath) {
     Path path = servicePath
@@ -12,22 +19,22 @@ static boolean pathExist(servicePath) {
 def load_sm_classes() {
     // Загружаем все классы проекта
     try {
-        def _Props = load 'src/ci/Props.groovy'
-        def _allure = load 'src/ci/allure.groovy'
-        def _ServiceInfo = load 'src/info/ServiceInfo.groovy'
-        def _ClusterInfo = load 'src/info/ClusterInfo.groovy'
-        def _LandscapeInfo = load 'src/info/LandscapeInfo.groovy'
-        def _DeployEnvironmentInfo = load 'src/info/DeployEnvironmentInfo.groovy'
-        def _serviceModel = load 'src/modules/config/serviceModel.groovy'
-        def _commonBuildProps = load 'src/modules/config/commonBuildProps.groovy'
-        def _buildProps = load 'src/modules/config/buildProps.groovy'
-        def _build = load 'src/modules/build.groovy'
-        def _dotnet = load 'src/modules/dotnet.groovy'
-        def _frontend = load 'src/modules/frontend.groovy'
-        def _infrastructure = load 'src/modules/infrastructure.groovy'
-        def _migrations = load 'src/modules/migrations.groovy'
-        def _python = load 'src/modules/python.groovy'
-        def _shellResult = load 'src/modules/shellResult.groovy'
+        load 'src/ci/Props.groovy'
+        load 'src/ci/allure.groovy'
+//        load 'src/info/ServiceInfo.groovy'
+        load 'src/info/ClusterInfo.groovy'
+        load 'src/info/LandscapeInfo.groovy'
+        load 'src/info/DeployEnvironmentInfo.groovy'
+//        load 'src/modules/config/serviceModel.groovy'
+        load 'src/modules/config/commonBuildProps.groovy'
+        load 'src/modules/config/buildProps.groovy'
+        load 'src/modules/build.groovy'
+        load 'src/modules/dotnet.groovy'
+        load 'src/modules/frontend.groovy'
+        load 'src/modules/infrastructure.groovy'
+        load 'src/modules/migrations.groovy'
+        load 'src/modules/python.groovy'
+        load 'src/modules/shellResult.groovy'
         echo "SUCCESS - All service-model classes are loaded"
     } catch (Exception e) {
         throw new Exception("""[31m!!!!!!!!!!!!!!!!!----------------- При загрузке groovy файлов возникла проблема -----------------!!!!!!!!!!!!!!!!!

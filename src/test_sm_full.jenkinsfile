@@ -10,10 +10,12 @@ pipeline {
         stage('Run main.groovy') {
             steps {
                 script {
-                    load 'src/ci/Props.groovy'
+                    def support = load 'src/modules/support.groovy'
+                    support.load_sm_classes()
+
                     def serviceInfo = load 'src/info/ServiceInfo.groovy'
                     def serviceModel = load 'src/modules/config/serviceModel.groovy'
-                    def serviceModelM = serviceModel().getConfig().call()
+                    def serviceModelM = serviceModel.serviceModel
 
                     def Services = serviceInfo.getServiceInfoByName('uber-bff', serviceModelM).call()
                     println Services['dockerfile']
